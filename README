@@ -36,3 +36,14 @@ Revision history
 0.97  - removed non-ANSI strnicmp
 0.96  - easier on VMS systems
 0.95  - first release
+
+==
+
+0.99g+k-0.01 (2012/05/02)
+	- add three new commands
+		Figure
+			Drum : Drum box
+			Call : Call box
+		Configure
+			SetWidth : change line width
+

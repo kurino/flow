@@ -1,4 +1,4 @@
-#define VERSION "0.99f"
+#define VERSION "0.99g+k-0.01"
 
 /*
 
@@ -53,7 +53,7 @@ typedef char param[ParamLen];
 
 #define MaxBoxes 2048  /* could not possibly have more than this */
 
-#define Commands 16
+#define Commands 19
 
 FlowCom fcom[Commands] = {
   { "SetTrack", 1, {0,0}, FALSE },
@@ -71,6 +71,9 @@ FlowCom fcom[Commands] = {
   { "Text",     0, {4,2}, TRUE  },
   { "TxtPos",   4, {0,0}, FALSE },
   { "Skip",     2, {0,0}, FALSE },
+  { "Drum",     0, {4,4}, TRUE  },
+  { "Call",     0, {4,2}, TRUE  },
+  { "SetWidth", 1, {0,0}, FALSE },
   { "%",        0, {0,0}, FALSE }
 };
 
@@ -89,6 +92,9 @@ typedef enum {SetTrack,
 	      Text,
 	      TxtPos,
 	      Skip,
+		  Drum,
+		  Call,
+		  SetWidth,
 	      Comment
 	     }  TheCommands;
 
@@ -113,6 +119,8 @@ coord Coords[MaxBoxes] = {{0,0}};  /* just initialise first coord */
 int CurCoord = 0;
 int CurTrack = ArrowS;
 int CurDirec = DownD;
+double CurWidth = 0.8;
+double NormalWidth = 0.8;
 coord CurScale = {1.,1.};
 coord CurSize = {0.,0.};
 aTag *CurTag = NULL;
@@ -181,6 +189,20 @@ tries to interpret the next line of inFile as a command, returns -1 if it can't
 
 }
 
+void push_linethickness() {
+
+  if ( CurWidth != NormalWidth ) {
+	fprintf(outFile,"\\linethickness{%fpt}\n",CurWidth);
+  }
+
+}
+
+void pop_linethickness() {
+
+  if ( CurWidth != NormalWidth ) {
+	fprintf(outFile,"\\linethickness{%fpt}\n",NormalWidth);
+  }
+}
 
 int doCommand(int command, param pList) {
 /*
@@ -200,7 +222,6 @@ etc. as required
     
     params[0][0]=0;  /* so Up / Down / Left / Right can find *'s for line
 			drawing                                            */
-
 
     if (CurTrack == LineS) trackStr = "line";
 
@@ -231,13 +252,16 @@ etc. as required
             t.x = Coords[CurCoord].x+CurSize.x/2;
             t.y = Coords[CurCoord].y-CurSize.y;
 
-            if (CurTrack != NoneS)
-            fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+            if (CurTrack != NoneS)	{
+			  push_linethickness();
+			  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
 		               t.x,
                        t.y,
                        trackStr,
                        0,-1,
                        VertGap);
+			  pop_linethickness();
+			}
                        
             checkBounds(&pic,&t);                       
 
@@ -256,13 +280,16 @@ etc. as required
             t.x = Coords[CurCoord].x+CurSize.x/2;
             t.y = Coords[CurCoord].y;
             
-            if (CurTrack != NoneS)
-            fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-                       t.x,
-                       t.y,
-                       trackStr,
-		       0,1,
-                       VertGap);
+            if (CurTrack != NoneS) {
+			  push_linethickness();
+			  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+					  t.x,
+					  t.y,
+					  trackStr,
+					  0,1,
+					  VertGap);
+			  pop_linethickness();
+			}
 
             checkBounds(&pic,&t);                       
             
@@ -281,13 +308,16 @@ etc. as required
             t.x = Coords[CurCoord].x+CurSize.x;
             t.y = Coords[CurCoord].y-CurSize.y/2;
 
-            if (CurTrack != NoneS)
-            fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+            if (CurTrack != NoneS) {
+			  push_linethickness();
+			  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
                        t.x,
                        t.y,
                        trackStr,
                        1,0,
                        HorzGap);
+			  pop_linethickness();
+			}
 
             checkBounds(&pic,&t);                       
             
@@ -305,13 +335,16 @@ etc. as required
             t.x = Coords[CurCoord].x;
             t.y = Coords[CurCoord].y-CurSize.y/2;
 
-            if (CurTrack != NoneS)
-            fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+            if (CurTrack != NoneS) {
+			  push_linethickness();
+			  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
                        t.x,
                        t.y,
                        trackStr,
                        -1,0,
                        HorzGap);
+			  pop_linethickness();
+			}
 
             checkBounds(&pic,&t);                       
             
@@ -333,6 +366,11 @@ etc. as required
 	CurSize.y = fcom[command].size.y*CurScale.y;
 
     }
+
+	fprintf(outFile,"%%%s %f,%f\n",
+		fcom[command].name,
+		fcom[command].size.x,
+			fcom[command].size.y );
 
     switch (command) {
 
@@ -410,6 +448,107 @@ etc. as required
         Coords[CurCoord].x-1./6.*CurSize.y,
         Coords[CurCoord].y-CurSize.y,
         CurSize.x + 1./6.*CurSize.y,
+        CurSize.y
+    );
+
+	break;
+
+    case Drum :
+	init=1;
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y-CurSize.y,
+		       CurSize.x,
+		       CurSize.y,
+		       CurBoxPos,
+		       CurPos);
+	doText();
+	fprintf(outFile,"}}}\n");
+	/* up */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\oval(%3.4f,%3.4f)}\n",
+		       Coords[CurCoord].x+CurSize.x/2.0,
+		       Coords[CurCoord].y-0.5,
+		       CurSize.x,1.0);
+	/* down */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\oval(%3.4f,%3.4f)[b]}\n",
+		       Coords[CurCoord].x+CurSize.x/2.0,
+		       Coords[CurCoord].y-CurSize.y+0.5,
+		       CurSize.x,1.0);
+	/* left */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y-CurSize.y+0.5,
+		       0,1,
+		       CurSize.y-1.0);
+	/* right */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x+CurSize.x,
+		       Coords[CurCoord].y-CurSize.y+0.5,
+		       0,1,
+		       CurSize.y-1.0);
+
+    checkBoundsRng(
+        &pic,
+        Coords[CurCoord].x,
+        Coords[CurCoord].y-CurSize.y-1.5,
+        CurSize.x,
+        CurSize.y+2.0
+    );
+
+	break;
+
+    case Call :
+	init=1;
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y-CurSize.y,
+		       CurSize.x,
+		       CurSize.y,
+		       CurBoxPos,
+		       CurPos);
+	doText();
+	fprintf(outFile,"}}}\n");
+
+	/* up */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y,
+		       1,0,
+		       CurSize.x);
+	/* down */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y-CurSize.y,
+		       1,0,
+		       CurSize.x);
+	/* left */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x,
+		       Coords[CurCoord].y-CurSize.y,
+		       0,1,
+		       CurSize.y);
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x+0.1,
+		       Coords[CurCoord].y-CurSize.y,
+		       0,1,
+		       CurSize.y);
+	/* right */
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x+CurSize.x,
+		       Coords[CurCoord].y-CurSize.y,
+		       0,1,
+		       CurSize.y);
+	fprintf(outFile,"\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		       Coords[CurCoord].x+CurSize.x-0.1,
+		       Coords[CurCoord].y-CurSize.y,
+		       0,1,
+		       CurSize.y);
+
+    checkBoundsRng(
+        &pic,
+        Coords[CurCoord].x,
+        Coords[CurCoord].y-CurSize.y,
+        CurSize.x,
         CurSize.y
     );
 
@@ -572,6 +711,21 @@ etc. as required
     
         break;
 
+    case SetWidth :
+        sscanf(pList,"%s",params[0]);
+
+		if ( strcmp ( "thick", params[0] ) == 0) {
+			 CurWidth = 0.8;
+		} else if ( strcmp ( "thin", params[0] ) == 0) {
+			 CurWidth = 0.4;
+		} else {
+			CurWidth = atof ( params[0] );
+			if ( CurWidth <= 0.0 ) {
+			  CurWidth = NormalWidth;
+			}
+		}
+        break;
+
     case Scale :
         sscanf(pList,"%f %f",&CurScale.x,&CurScale.y);
         break;
@@ -609,13 +763,16 @@ etc. as required
 	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
 	    init=1;
 	    dimen *= TrackX;
-	    if (CurTrack != NoneS)
-	    fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+	    if (CurTrack != NoneS) {
+		  push_linethickness();
+		  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
 		       Coords[CurCoord].x+CurSize.x,
 		       Coords[CurCoord].y-CurSize.y/2,
 		       (params[0][0]=='*')?"vector":"line",
 		       1,0,
 		       dimen);
+		  pop_linethickness();
+		}
 
 	    Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x +
 				   dimen;
@@ -635,13 +792,16 @@ etc. as required
 	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
 	    init=1;
 	    dimen *= TrackY;
-	    if (CurTrack != NoneS)
-	    fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+	    if (CurTrack != NoneS)	{
+		  push_linethickness();
+		  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
 		       Coords[CurCoord].x+CurSize.x/2,
 		       Coords[CurCoord].y-CurSize.y,
 		       (params[0][0]=='*')?"vector":"line",
 		       0,-1,
 		       dimen);
+		  pop_linethickness();
+		}
 
 	    Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
 				   fcom[command].size.x / 2;
@@ -662,13 +822,16 @@ etc. as required
 	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
 	    init=1;
 	    dimen *= TrackX;
-	    if (CurTrack != NoneS)
-	    fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+	    if (CurTrack != NoneS) {
+		  push_linethickness();
+		  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
 		       Coords[CurCoord].x,
 		       Coords[CurCoord].y-CurSize.y/2,
 		       (params[0][0]=='*')?"vector":"line",
 		       -1,0,
 		       dimen);
+		  pop_linethickness();
+		}
 
 	    Coords[CurCoord+1].x = Coords[CurCoord].x -
 				   dimen;
@@ -687,13 +850,16 @@ etc. as required
 	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
 	    init=1;
 	    dimen *= TrackY;
-	    if (CurTrack != NoneS)
-	    fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
+	    if (CurTrack != NoneS) {
+  		  push_linethickness();
+		  fprintf(outFile,"\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
 		       Coords[CurCoord].x+CurSize.x/2,
 		       Coords[CurCoord].y,
                        (params[0][0]=='*')?"vector":"line",
                        0,1,
                        dimen);
+  		  pop_linethickness();
+		}
                        
             Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
                                    fcom[command].size.x / 2;
@@ -792,8 +958,12 @@ int main(int argc, char **argv) {
 
 
     inFile = stdin; outFile = stdout;
-    
+
+#ifdef KURINO    
+	mkstemp(tmpfileNm);
+#else
     tmpnam(tmpfileNm);
+#endif
     outFile = fopen(tmpfileNm,"w");
 
     if (argc > 1) {
