@@ -1,0 +1,38 @@
+SHORT: makes flowcharts for the LaTeX picture environment
+
+Flow 0.99g 2004-2-18
+
+Summary : flow reads a simple flow chart description file and produces the
+          corresponding LaTeX picture environment
+
+Files in flow099g.tar.gz
+
+         flow.c      - plain C code, should be portable
+         flowdoc.tex - documentation in LaTeX
+         README      - this file
+	 COPYING     - GNU GPL license
+
+Note:
+
+flow.c uses tmpnam instead of mkstemp, gcc says this is bad, but I'm
+not sure what the portability implications are when using mkstemp
+
+flowdoc.tex is old style 2.09 LaTeX, but being vanilla LaTeX is works
+fine in compatibility mode
+
+Revision history
+
+(99j is a Japanese packaging of 99c)
+
+0.99g - command scanning overflow fixed, thanks Jean-Michel Rouet, 2009-10-30
+0.99f - % comment command added by Joost Bruynooghe
+0.99e - GPL'ed
+0.99d - more bugs, clarity
+0.99c - removed bug in Up,Down,Left,Right bounding
+0.99b - unlink() -> remove() for ANSI C compatibility (whoops)
+0.99  - writes an appropriate \begin{picture} command around the output
+        (thanks to Brad Clements for the (obvious :-) suggestion)
+0.98  - allowed for non-square Choice boxes
+0.97  - removed non-ANSI strnicmp
+0.96  - easier on VMS systems
+0.95  - first release
