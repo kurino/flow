@@ -1,0 +1,22 @@
+Right
+SetTrack arrow
+TxtPos [l] [l]
+Box 3.5 2
+  Needs some
+  space on the
+  left
+TxtPos [l] [l] ~
+Box
+  Left justified
+  text with
+  space
+SetTrack line
+TxtPos [c] [c]
+Box
+  Centred
+  Text
+SetTrack none
+TxtPos [r] [r] ~ \hspace*{1ex}
+Box
+  Right justified
+  Text

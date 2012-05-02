@@ -1,0 +1,791 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
+	"http://www.w3.org/TR/REC-html401/loose.dtd">
+<html lang="ja">
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=ISO-8859-1">
+<meta http-equiv="Content-Style-Type" content="text/css">
+<meta http-equiv="Content-Script-Type" content="text/javascript">
+<meta name="generator" content="SmartDoc 1.2b">
+<meta name="author" content="
+Terry Brown
+        " lang="ja">
+<meta name="date" content="November 25, 1992 --- September 22, 2005" lang="ja">
+<title>Flow --- a syntax to generate flowcharts in the 
+
+<math>L<small>A</small>T<sub>E</sub>X</math>
+
+ picture environment</title>
+<style type="text/css">
+<!--
+/*
+    article.css
+
+    since   : Nov. 21, 1998
+    version : Aug. 21, 2003
+    author  : ASAMI, Tomoharu (asami@XMLSmartDoc.org)
+*/
+
+A:link {
+  color: green;
+}
+
+A:visited {
+  color: black;
+}
+
+A:hover{
+  color: gold;
+};
+
+body {
+  background: white;
+  font-family: times, serif;
+}
+
+h1 {
+}
+
+h1.title {
+  color: black;
+  background: gold;
+  text-align: center;
+  border-style: outset;
+  border-color: yellow;
+  padding: 10pt;
+  margin-left: 60pt;
+  margin-right: 60pt;
+}
+
+h1.part {
+  font-weight: bold;
+  color: black;
+  background: gold;
+  padding: 20pt;
+}
+
+h1.chapter {
+  color: tan;
+  background: black;
+  text-align: left;
+  padding: 5pt;
+}
+
+h2 {
+  color: bisque;
+  background: #666666;
+  padding: 3pt;
+}
+
+h3 {
+  color: black;
+  background: #aaaaaa;
+  padding: 2pt;
+  margin-right: 100pt;
+}
+
+h4 {
+  color: black;
+  background: #eeeeee;
+  padding: 1pt;
+  margin-right: 200pt;
+}
+
+dfn {
+  font-weight: bold;
+  font-style: normal;
+}
+
+code {
+  font-family: helvetica, sans-serif;
+  font-weight: bold;
+}
+
+li p {
+  text-indent: 0pt;
+}
+
+dt {
+  font-weight: bold;
+}
+
+th p {
+  text-indent: 0pt;
+}
+
+td p {
+  text-indent: 0pt;
+}
+
+div.table {
+  text-align: center;
+}
+
+table.data {
+  border-collapse: separate;
+  text-align: justify;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+  background-color: green;
+}
+
+table.data caption {
+  background-color: khaki;
+  font-weight: bold;
+}
+
+table.data th {
+  color: yellow;
+  background-color: lightseagreen;
+}
+
+table.data td {
+  background-color: antiquewhite;
+}
+
+table.data td.key {
+  background-color: salmon;
+  font-weight: bold;
+}
+
+
+table.menu {
+  text-align: justify;
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+  text-align: center;
+}
+
+table.menu caption {
+  background-color: khaki;
+  font-weight: bold;
+}
+
+table.menu th {
+  color: yellow;
+  background-color: lightseagreen;
+}
+
+table.menu td {
+  color: Maroon;
+  background-color: antiquewhite;
+  font-weight: bold;
+  padding: 10pt;
+}
+
+table.menu td.key {
+  font-size: x-large;
+  color: RoyalBlue;
+  background-color: LightGreen;
+  font-weight: bold;
+  padding: 10pt;
+}
+
+table.menu td.key A:link {
+  color: RoyalBlue;
+}
+
+table.menu td.key A:visited {
+  color: RoyalBlue;
+}
+
+table.navigator {
+  text-align: justify;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+table.navigator td {
+  text-align: center;
+  font-weight: bold;
+}
+
+table.languages {
+  text-align: justify;
+  margin-left: auto;
+  margin-right: auto;
+  margin-bottom: 0pt;
+  margin-top: 0pt;
+  font-size: x-small;
+  position: absolute;
+  right: 0pt;
+}
+
+table.languages td.current {
+}
+
+table.languages td.other {
+  background-color: Orange;
+}
+
+p {
+  margin: 0pt;
+  text-indent: 1em;
+}
+
+p.ja {
+  margin: 0pt;
+  text-indent: 1em;
+}
+
+p.first {
+  margin: 0pt;
+  text-indent: 0em;
+}
+
+p.first_ja {
+  margin: 0pt;
+  text-indent: 1em;
+}
+
+div.title {
+  text-align: center;
+}
+
+span.title {
+  font-size: larger;
+}
+
+span.subtitle {
+  font-size: smaller;
+}
+
+div.toc {
+  background-color: cornsilk;
+  padding: 10pt;
+  border-style: inset;
+  border-color: cornsilk;
+  margin-top: 10pt;
+  margin-bottom: 30pt;
+}
+
+div.titletoc {
+  background-color: cornsilk;
+  padding: 10pt;
+  border-style: inset;
+  border-color: cornsilk;
+  margin-top: 10pt;
+  margin-bottom: 30pt;
+}
+
+div.date {
+  text-align: center;
+}
+
+div.org {
+  text-align: center;
+}
+
+div.author {
+  text-align: center;
+  font-weight: bold;
+}
+
+div.email {
+  text-align: center;
+}
+
+div.hp {
+  text-align: center;
+}
+
+div.summary {
+  color: maroon;
+  background: darkkhaki;
+  border-style: inset;
+  border-color: khaki;
+  margin-top: 20pt;
+  margin-bottom: 20pt;
+  margin-left: 30pt;
+  margin-right: 30pt;
+  padding: 5pt;
+}
+
+div.comment {
+  color: red;
+  background: yellow;
+}
+
+span.comment {
+  color: red;
+  background: yellow;
+}
+
+div.navigator {
+  background: khaki;
+  border-top: 1pt solid black;
+  border-bottom: 1pt solid black;
+  text-align: center;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+}
+
+div.navigatortop {
+  background: khaki;
+  border-top: 1pt solid black;
+  border-bottom: 1pt solid black;
+  text-align: center;
+  margin-bottom: 10pt;
+}
+
+div.navigatorbottom {
+  background: khaki;
+  border-top: 1pt solid black;
+  border-bottom: 1pt solid black;
+  text-align: center;
+  margin-top: 10pt;
+}
+
+div.languages {
+  text-align: right;
+}
+
+div.footnote {
+  background: antiquewhite;
+}
+
+div.fyi {
+  color: maroon;
+  background: peachpuff;
+  padding: 5pt;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+}
+
+div.fyi div.title {
+  background: antiquewhite;
+  font-weight: bold;
+  padding: 5pt;
+  margin-top: 5pt;
+  margin-bottom: 5pt;
+}
+
+div.caption {
+  background: lavender;
+  font-weight: bold;
+  padding: 5pd;
+  width: 300pt;
+  margin-top: 10pt;
+}
+
+div.result {
+  background: ivory;
+  border-style: inset;
+  border-color: gold;
+  padding: 10pt;
+  margin-top: 10pt;
+  margin-bottom: 10pt;
+}
+
+span.caption {
+  background: lavender;
+  font-weight: bold;
+}
+
+pre.program {
+  background-color: gainsboro;
+  font-family: courier, monospace;
+  padding: 5pt;
+  margin-right: 30pt;
+}
+
+pre.program em {
+  color: red;
+  font-style: normal;
+}
+
+pre.program strong {
+  color: red;
+  background-color: yellow;
+  font-style: normal;
+}
+
+pre.program span.keyword {
+  color: Blue;
+  font-style: normal;
+}
+
+pre.program span.primitive {
+  color: Green;
+  font-style: normal;
+}
+
+pre.program span.comment {
+  color: Red;
+  background-color: gainsboro;
+  font-style: normal;
+}
+
+pre.program span.quote {
+  color: OrangeRed;
+  font-style: normal;
+}
+
+
+pre.program span.class {
+  color: darkcyan;
+  font-style: normal;
+}
+
+pre.program span.constant {
+  color: blueviolet;
+  font-style: normal;
+}
+
+pre.program span.variable {
+  color: DarkGoldenrod;
+  font-style: normal;
+}
+
+var {
+  color: green;
+  font-style: italic;
+}
+
+tt {
+  font-family: courier, monospace;
+}
+
+code {
+  font-family: helvetica, sans-serif;
+  font-weight: bold;
+}
+
+pre.console {
+  background-color: black;
+  color: white;
+  font-family: courier, monospace;
+  padding: 5pt;
+  margin-right: 30pt;
+}
+
+pre.console kbd {
+  font-family: courier, monospace;
+  color: yellow;
+}
+
+span.toggle {
+  font-weight: bold;
+}
+
+div.figure {
+  text-align: center;
+}
+
+img.figure {
+  margin: 10pt;
+}
+
+div.equation {
+  margin-top: 1em;
+  margin-right: 30pt;
+  margin-bottom: 1em;
+  padding-top: 1em;
+  padding-left: 4em;
+  padding-bottom: 1em;
+  background: powderblue;
+}
+
+div.equation table {
+}
+
+div.equation table td.padding {
+  width:2em
+}
+
+td.equationNumber {
+  width: 4em;
+  text-align: right;
+}
+-->
+</style>
+<script type="text/javascript">
+<!--
+/*
+ * HTML4JavaScript.js
+ *
+ * @since   Nov. 17, 1998
+ * @version Feb. 18, 2002
+ * @author  ASAMI, Tomoharu (asami@XMLSmartDoc.org)
+ */
+var backupColor=null;
+var backupBGColor=null;
+var backupFontStyle=null;
+var backupIDColor=null;
+var backupIDBGColor=null;
+var backupIDFontStyle=null;
+var backupIDBorderStyle=null;
+
+var backupOnKeyDown=null;
+
+function normal(element) {
+  if (document.all) {
+    if (backupColor != null) {
+      element.style.color=backupColor;
+      backupColor=null;
+    }
+    if (backupBGColor != null) {
+      element.style.background=backupBGColor;
+      backupBGColor=null;
+    }
+    if (backupFontStyle != null) {
+      element.style.fontStyle=backupFontStyle;
+      backupFontStyle=null;
+    }
+    var id = null;
+    if (element.href != null) {
+      id = element.href;
+      id = id.substring(id.indexOf("#") + 1);
+    }
+    if (id != null) {
+      var target = document.all.item(id, 0);
+      if (backupIDColor != null) {
+        target.style.color=backupIDColor;
+        backupIDColor=null;
+      }
+      if (backupIDBGColor != null) {
+        target.style.background=backupIDBGColor;
+        backupIDBGColor=null;
+      }
+      if (backupIDFontStyle != null) {
+        target.style.fontStyle=backupIDFontStyle;
+        backupIDFontStyle=null;
+      }
+      if (backupIDBorderStyle != null) {
+        target.style.borderStyle=backupIDBorderStyle;
+        backupIDBorderStyle=null;
+      }
+    }
+  }
+}
+
+function hilight(element) {
+  if (document.all) {
+    backupBGColor=element.style.background;
+    element.style.background="gold";
+  }
+}
+
+function hilightString(element, color) {
+  if (color == null) {
+    color="darkolivegreen";
+  }
+  if (document.all) {
+    backupColor=element.style.color;
+    backupFontStyle=element.style.fontStyle;
+    element.style.color=color;
+  }
+}
+
+function hilightSelflink(element, color) {
+  if (color == null) {
+    color="darkolivegreen";
+  }
+  if (document.all) {
+    backupColor=element.style.color;
+    backupBGColor=element.style.background;
+    backupFontStyle=element.style.fontStyle;
+    element.style.color=color;
+    var id = null;
+    if (element.href != null) {
+      id = element.href;
+      id = id.substring(id.indexOf("#") + 1);
+    }
+    if (id != null) {
+      var target = document.all.item(id, 0);
+      backupIDColor=target.style.color;
+//      backupIDBGColor=target.style.background;
+//      backupIDFontStyle=target.style.fontStyle;
+      backupIDBorderStyle=target.style.borderStyle;
+      target.style.color="red";
+      target.style.borderStyle="outset";
+    }
+  }
+}
+
+function hilightHyperlink(element, color) {
+  if (color == null) {
+    color="darkorange";
+  }
+  if (document.all) {
+    backupColor=element.style.color;
+    backupBGColor=element.style.background;
+    backupFontStyle=element.style.fontStyle;
+    element.style.color=color;
+  }
+}
+
+function hilightExternallink(element, color) {
+  if (color == null) {
+    color="purple";
+  }
+  if (document.all) {
+    backupColor=element.style.color;
+    backupBGColor=element.style.background;
+    backupFontStyle=element.style.fontStyle;
+    element.style.color=color;
+  }
+}
+
+function toggleChildren(node) {
+  if (document.all) {
+    for (i = 0;i < node.children.length;i++) {
+      var child = node.children[i];
+      if (child.className == "dynamic") {
+        if (child.style.display == "") {
+            child.style.display = "none";
+        } else {
+            child.style.display = "";
+        }
+      }
+    }
+  }
+}
+
+function toggleDynamic(node) {
+  if (document.all) {
+    if (node.tagName == "LI") {
+      toggleChildren(node);
+    }
+  }
+}
+
+function isMsie4orGreater() { 
+  var ua = window.navigator.userAgent; var msie = ua.indexOf ("MSIE");
+  if (msie > 0) {
+    return (parseInt (ua.substring (msie+5, ua.indexOf (".", msie))) >= 4)   
+      && (ua.indexOf ("MSIE 4.0b") <0);
+  } else {
+    return false;
+  }
+}
+
+function keyEventHandler() {
+  if (document.all) {
+    if (event.keyCode == 13) {
+      var child = document.all.item("doc_next_page_", 0);
+      if (child != null) {
+        location.href = child.href;
+      }
+    } else if (event.keyCode == 39) {
+      var child = document.all.item("doc_next_page_", 0);
+      if (child != null) {
+        location.href = child.href;
+      }
+    } else if (event.keyCode = 37) {
+      var child = document.all.item("doc_prev_page_", 0);
+      if (child != null) {
+        location.href = child.href;
+      }
+    } else {
+      backupOnKeyDown();
+    }
+  }
+}
+
+function setOHPHandler() {
+  backupOnKeyDown=document.onkeydown;
+  document.onkeydown=keyEventHandler;
+}
+// -->
+</script>
+</head>
+<body>
+<div style="text-align:right"><a href="http://www.XMLSmartDoc.org" target="_top"><span style="color:#4F5952;background:#EE8362;font-family:sans-serif;font-size:xx-small;text-decoration:none">Powered by </span><span style="color:#058258;background:#EE8362;font-family:fantasy, sans-serif;font-size:x-small;text-decoration:none">SmartDoc</span></a></div>
+<div class="languages">
+<table class="languages">
+<tr>
+<td class="other"><a href="flowdoc_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">JAPANESE</a></td><td class="current">ENGLISH</td></tr>
+</table>
+</div>
+<div class="navigatortop">
+<table class="navigator">
+<tr>
+<td><a href="flowdoc_s4_ss2_sss8_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_prev_page_"><span class="toggle">&lt;&lt;</span></a></td>
+<td><a href="flowdoc_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flow --- a syntax to generate flowcharts in the 
+
+<math>L<small>A</small>T<sub>E</sub>X</math>
+
+ picture environment</a>/<a href="flowdoc_s4_en.html#doc4_id6301" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flowchart description syntax</a>/<a href="flowdoc_s4_ss2_en.html#doc4_id6336" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">The Commands</a>/Skip</td>
+<td><a href="flowdoc_s5_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
+</tr>
+</table>
+</div>
+
+<h4 id="doc4_id6625">Skip</h4>
+
+
+<pre src="skip.stx">Skip x0 y0 x1 x1
+</pre>
+
+
+<div class="table">
+<table id="doc4_id6629" class="data" rules="groups">
+<colgroup span="2">
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr class="even">
+<td>x0</td>
+<td>Horizontal separation between boxes, default 1 <span>\unitlength</span></td>
+</tr>
+<tr class="odd">
+<td>y0</td>
+<td>Vertical separation between boxes, default 1 <span>\unitlength</span></td>
+</tr>
+<tr class="even">
+<td>x1</td>
+<td>Multiplier for <span>Left</span> and <span>Right</span> commands, default 1</td>
+</tr>
+<tr class="odd">
+<td>y1</td>
+<td>Multiplier for <span>Up</span> and <span>Down</span> commands, default 1</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+<p class="first_ja"><a href="sample/skip.flow"> skip.flow </a></p>
+
+<pre src="skip.flow">Skip 0 0 1 1
+SetTrack none
+Box
+  After this
+  Box
+Box
+  Is another
+  with no
+  gap
+SetTrack arrow
+Right 5
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
+Skip 0 0 3 3
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
+</pre>
+
+<p><img src="figure/skip.jpg" /></p>
+<div class="navigatorbottom">
+<table class="navigator">
+<tr>
+<td><a href="flowdoc_s4_ss2_sss8_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&lt;&lt;</span></a></td>
+<td><a href="flowdoc_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flow --- a syntax to generate flowcharts in the 
+
+<math>L<small>A</small>T<sub>E</sub>X</math>
+
+ picture environment</a>/<a href="flowdoc_s4_en.html#doc4_id6301" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flowchart description syntax</a>/<a href="flowdoc_s4_ss2_en.html#doc4_id6336" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">The Commands</a>/Skip</td>
+<td><a href="flowdoc_s5_en.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
+</tr>
+</table>
+</div>
+</body>
+</html>

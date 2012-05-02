@@ -1,0 +1,28 @@
+Right
+SetTrack arrow
+TxtPos [l] [l]
+Box 3.5 2
+    左側に少し
+    スペースが
+    必要
+TxtPos [l] [l] ~
+Box
+    少し空けた
+    左揃えの
+    テキスト
+SetTrack line
+TxtPos [c] [c]
+Box
+    中央揃えの
+    テキスト
+SetTrack none
+TxtPos [r] [r] ~ \hspace*{1zh}
+Box
+    右揃えの
+    テキスト
+SetTrack line
+TxtPos [c] [c]
+SetWidth 1.6
+Box
+	最後の線
+	は太い

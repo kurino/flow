@@ -1,0 +1,20 @@
+Skip 0 0 1 1
+SetTrack none
+Box
+  After this
+  Box
+Box
+  Is another
+  with no
+  gap
+SetTrack arrow
+Right 5
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
+Skip 0 0 3 3
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *

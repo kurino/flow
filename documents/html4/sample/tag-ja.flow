@@ -1,0 +1,21 @@
+Right 0
+Choice . . いいえ はい
+    止まる準備
+    できたか
+Tag
+Right 1
+Choice . . 右 下
+    右へ行くか
+    下か
+Tag
+Right 1
+Box
+    右へ
+ToTag
+Down
+Box
+    下はここ
+ToTag
+Down
+Oval
+    停止

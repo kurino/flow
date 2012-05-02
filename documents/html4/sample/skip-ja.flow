@@ -1,0 +1,20 @@
+Skip 0 0 1 1
+SetTrack none
+Box
+    このボックスの
+    後
+Box
+    間を空けずに
+    別の
+    ボックス
+SetTrack arrow
+Right 5
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
+Skip 0 0 3 3
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *

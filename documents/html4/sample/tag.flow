@@ -1,0 +1,21 @@
+Right 0
+Choice . . N Y
+  Ready to
+  stop?
+Tag
+Choice . . Right Down
+  Go right
+  or Down?
+Tag
+Right 1
+Box
+  To the
+  right
+ToTag
+Down
+Box
+  Down here
+ToTag
+Down
+Oval
+  STOP
