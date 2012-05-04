@@ -53,9 +53,7 @@ typedef char param[ParamLen];
 
 #define MaxBoxes 2048  /* could not possibly have more than this */
 
-#define Commands 19
-
-FlowCom fcom[Commands] = {
+FlowCom fcom[] = {
   { "SetTrack", 1, {0,0}, FALSE },
   { "Up",       1, {0,0}, FALSE },
   { "Down",     1, {0,0}, FALSE },
@@ -76,6 +74,8 @@ FlowCom fcom[Commands] = {
   { "SetWidth", 1, {0,0}, FALSE },
   { "%",        0, {0,0}, FALSE }
 };
+
+#define Commands sizeof(fcom)/sizeof(*fcom)	///// 19
 
 typedef enum {SetTrack,
 	      Up,

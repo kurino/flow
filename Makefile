@@ -44,6 +44,12 @@ clean	:
 install	:	flow
 	cp flow ${BINDIR}
 
+#
+#
+#
+
+git-push:
+	git push origin master
 
 #
 #

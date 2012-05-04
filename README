@@ -39,6 +39,10 @@ Revision history
 
 ==
 
+#
+#	+k version ( 2012/05/02 - )
+#
+
 0.99g+k-0.01 (2012/05/02)
 	- add three new commands
 		Figure
@@ -47,3 +51,24 @@ Revision history
 		Configure
 			SetWidth : change line width
 
+0.99g+k-0.01 (2012/05/03)
+	- add Documents with SmartDoc <http://www.xmlsmartdoc.org/>
+		- pdf version
+			documents/flowdoc_en.pdf
+				maybe same as flowdoc.pdf
+			documents/flowdoc_ja.pdf
+				copy of <http://homepage2.nifty.com/PAF00305/flow>
+				Sptical Thanks to owner of this page
+		- html version
+			see documents/index.html
+
+0.99g+k-0.01 (2012/05/05)
+	# pre refactaring version
+		README
+			about version ``0.99g+k-0.01 (2012/05/05)''
+		Makefile
+			add git-push target
+		documents/flowdoc_ja.pdf
+			change punctuation marks
+		flow.c
+			pre refactaring
