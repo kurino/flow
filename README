@@ -64,11 +64,30 @@ Revision history
 
 0.99g+k-0.01 (2012/05/05)
 	# pre refactaring version
-		README
-			about version ``0.99g+k-0.01 (2012/05/05)''
-		Makefile
-			add git-push target
-		documents/flowdoc_ja.pdf
-			change punctuation marks
-		flow.c
-			pre refactaring
+	README
+		about version ``0.99g+k-0.01 (2012/05/05)''
+	Makefile
+		add git-push target
+	documents/flowdoc_ja.pdf
+		change punctuation marks
+	flow.c
+		pre refactaring
+
+0.99g+k-0.02 (2012/05/05)
+	# pre refactaring version
+	refactaring
+		- file split
+			make many new files ( which is moved from flow.c )
+		- naming rules
+			- Type => Capital ( cf. bool -> Bool )
+			- Constant => Upper case ( cf. ParamLen -> PARAM_LEN )
+			- Variable/Function => Hungarian ( cf. CurCoord -> curCoord )
+		- remove global variable
+			- change to static variale ( file global )
+		- remove Magic Number
+			- define new macro symboles
+	README
+		about version ``0.99g+k-0.02 (2012/05/05)''
+	archives
+		- Source Code Archives
+
