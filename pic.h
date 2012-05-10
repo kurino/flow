@@ -25,8 +25,8 @@
  */
 
 extern	BoundingBox	getPic ( void );
-extern	void	checkPicBounds ( Coord *c );
-extern	void	checkPicBoundsRng ( float x, float y, float sx, float sy );
+extern	void		checkPicBounds ( const Coord *c );
+extern	void		checkPicBoundsRng ( float x, float y, float sx, float sy );
 
 /*
  *

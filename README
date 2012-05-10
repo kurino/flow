@@ -10,7 +10,7 @@ Files in flow099g.tar.gz
          flow.c      - plain C code, should be portable
          flowdoc.tex - documentation in LaTeX
          README      - this file
-	 COPYING     - GNU GPL license
+         COPYING     - GNU GPL license
 
 Note:
 
@@ -58,7 +58,7 @@ Revision history
 				maybe same as flowdoc.pdf
 			documents/flowdoc_ja.pdf
 				copy of <http://homepage2.nifty.com/PAF00305/flow>
-				Sptical Thanks to owner of this page
+				Special Thanks to owner of this page
 		- html version
 			see documents/index.html
 
@@ -74,20 +74,35 @@ Revision history
 		pre refactaring
 
 0.99g+k-0.02 (2012/05/05)
-	# pre refactaring version
+	# post refactaring version (1)
 	refactaring
 		- file split
-			make many new files ( which is moved from flow.c )
+			make many new files ( which are moved from flow.c )
 		- naming rules
 			- Type => Capital ( cf. bool -> Bool )
 			- Constant => Upper case ( cf. ParamLen -> PARAM_LEN )
 			- Variable/Function => Hungarian ( cf. CurCoord -> curCoord )
 		- remove global variable
 			- change to static variale ( file global )
-		- remove Magic Number
+		- remove Magic Numbers
 			- define new macro symboles
 	README
 		about version ``0.99g+k-0.02 (2012/05/05)''
 	archives
 		- Source Code Archives
 
+0.99g+k-0.03 (2012/05/07)
+	# post refactaring version (2)
+	refactaring
+		- file split
+			make many new files ( which are moved from docommand.c )
+		- remove global variable
+			- all global variable has been changed to static variables
+	README
+		about version ``0.99g+k-0.03 (2012/05/10)''
+	Documents
+		- add appanedix
+		- add Mail address
+			kurino@zaregoto.org and
+		- add Home Page address
+			https://github.com/kurino/flow

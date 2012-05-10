@@ -24,30 +24,48 @@
 #include "dotext.h"
 #include "linethickness.h"
 #include "pic.h"
+#include "drawarrow.h"
+#include "xalloc.h"
 #include "docommand.h"
 
 /*
  *
  */
 
-#define MAX_BOXES 2048  /* could not possibly have more than this */
+#define MAX_BOXES	2048  /* could not possibly have more than this */
+#define	POS_SIZE	20
+
+#define	MAX_PARAMS	10
+#define	PARAM_LENGTH	80
+
+
+/*
+ *
+ */
 
 /* state / position tracking variables */
 
-Coord Coords[MAX_BOXES] = {{0,0}};  /* just initialise first coord */
-int CurCoord = 0;
-int CurTrack = ArrowS;
-int CurDirec = DownD;
-Coord CurScale = {1.,1.};
-Coord CurSize = {0.,0.};
-ATag *CurTag = NULL;
-char CurPos[20] = "[c]";
-char CurBoxPos[20] = "[c]";
-float TrackX = 1.;
-float TrackY = 1.;
+static Coord coords[ MAX_BOXES ] = {
+	{	0,	0	}
+};  /* just initialise first coord */
+static int curCoord = 0;
+static int curTrack = ArrowS;
+static int curDirec = DownD;
+static Coord curScale = {	1.,	1.	};
+static Coord curSize = {	0.,	0.	};
+static ATag *curTag = NULL;
+static char curPos[ POS_SIZE ] = "[c]";
+static char curBoxPos[ POS_SIZE ] = "[c]";
 
-float VertGap=1.;
-float HorzGap=1.;
+static float trackX = 1.;
+static float trackY = 1.;
+
+static float vertGap = 1.;
+static float horzGap = 1.;
+
+/*
+ *
+ */
 
 int doCommand ( FlowCom *comPtr, Param pList ) {
 /*
@@ -55,24 +73,21 @@ output the LaTeX bits for this command, updating the coords, Coord list
 etc. as required
 */
 
-    static int init = 0;
+    static int init = FALSE;
     ATag *tempTag;
-    char params[10][80];
-    char *trackStr = "vector";
+    char params[ MAX_PARAMS ][ PARAM_LENGTH ];
     float dimen,x,y,x1,y1;
     int i,xs,ys;
     Coord t;
+    Coord s;
 	char leader[ SPACEING_LENGTH ];
 	char tailer[ SPACEING_LENGTH ];
-               
+			   
     dimen = 0.;
     
-    params[0][0]= EOS;  /* so Up / Down / Left / Right can find *'s for line
-			drawing                                            */
+    params[ 0 ][ 0 ] = EOS;  /* so Up / Down / Left / Right can find *'s for line drawing */
 
-    if (CurTrack == LineS) trackStr = "line";
-
-    if (comPtr -> hasText) {
+    if ( comPtr -> hasText ) {
 	if (( comPtr -> command != Choice && sscanf(pList,"%f %f",&x,&y) == 2) ||
 	    ( comPtr -> command == Choice && sscanf(pList,"%s %s %s %s %f %f",
 				       params[0],
@@ -85,376 +100,161 @@ etc. as required
 	}
     }
 
-    if ( !init && CurSize.x == 0. && CurSize.y == 0. ) {
-	    CurSize.x = comPtr -> size.x * CurScale.x;
-	    CurSize.y = comPtr -> size.y * CurScale.y;
+    if ( !init && curSize.x == 0. && curSize.y == 0. ) {
+	    curSize.x = comPtr -> size.x * curScale.x;
+	    curSize.y = comPtr -> size.y * curScale.y;
     }
 
     if ( init && ( comPtr -> size.x != 0 || comPtr -> size.y != 0 ) ) {
 
-	switch ( CurDirec ) {
+		switch ( curDirec ) {
+	    case RightD:
+		case DownD:
+		case LeftD:
+		case UpD:
+			switch ( curDirec ) {
+		    case RightD:
+				dimen = horzGap;
+				t.x = coords[curCoord].x + curSize.x;
+				t.y = coords[curCoord].y - curSize.y / 2;
+				s.x = horzGap;
+				s.y = comPtr -> size.y * curScale.y / 2;
+			break;
 
-	case DownD :
+			case DownD:
+				dimen = vertGap;
+				t.x = coords[ curCoord ].x + curSize.x / 2;
+				t.y = coords[ curCoord ].y - curSize.y;
+				s.x = - comPtr -> size.x * curScale.x / 2;
+				s.y = - vertGap;
+				break;
 
-            t.x = Coords[CurCoord].x+CurSize.x/2;
-            t.y = Coords[CurCoord].y-CurSize.y;
+			case LeftD:
+				dimen = horzGap;
+				t.x = coords[curCoord].x;
+				t.y = coords[curCoord].y - curSize.y / 2;
+				s.x = - comPtr -> size.x * curScale.x - horzGap;
+				s.y =   comPtr -> size.y * curScale.y / 2;
+				break;
 
-            if (CurTrack != NoneS)	{
-			  push_linethickness();
-			  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-		               t.x,
-                       t.y,
-                       trackStr,
-                       0,-1,
-                       VertGap);
-			  pop_linethickness();
+			case UpD:
+				dimen = vertGap;
+				t.x = coords[curCoord].x + curSize.x / 2;
+				t.y = coords[curCoord].y;
+				s.x = - comPtr -> size.x * curScale.x / 2;
+				s.y =   comPtr -> size.y * curScale.y + vertGap;
+				break;
+
 			}
 
-            checkPicBounds ( &t );
+			drawArrow ( curTrack, t, curDirec, dimen );
 
-            Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
-                                   comPtr -> size.x*CurScale.x / 2;
+			checkPicBounds ( &t );
 
-            Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y
-                                   - VertGap;
-                                   
-            checkPicBounds ( Coords + CurCoord + 1 );
-            
-            break;
+			coords[ curCoord + 1 ].x = t.x + s.x;
+			coords[ curCoord + 1 ].y = t.y + s.y;
 
-        case UpD :
+			checkPicBounds ( coords + curCoord + 1 );
 
-            t.x = Coords[CurCoord].x+CurSize.x/2;
-            t.y = Coords[CurCoord].y;
-            
-            if (CurTrack != NoneS) {
-			  push_linethickness();
-			  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-					  t.x,
-					  t.y,
-					  trackStr,
-					  0,1,
-					  VertGap);
-			  pop_linethickness();
-			}
+		    break;
 
-            checkPicBounds ( &t );
-            
-            Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
-                                   comPtr -> size.x*CurScale.x / 2;
+		default:
+			break;
+		}
 
-            Coords[CurCoord+1].y = Coords[CurCoord].y + 
-                                   comPtr -> size.y*CurScale.y
-				   + VertGap;
-            checkPicBounds ( Coords + CurCoord + 1 );
-            
-            break;
+		curCoord++;
 
-        case RightD :
+		curSize.x = comPtr -> size.x * curScale.x;
+		curSize.y = comPtr -> size.y * curScale.y;
 
-            t.x = Coords[CurCoord].x+CurSize.x;
-            t.y = Coords[CurCoord].y-CurSize.y/2;
-
-            if (CurTrack != NoneS) {
-			  push_linethickness();
-			  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-                       t.x,
-                       t.y,
-                       trackStr,
-                       1,0,
-                       HorzGap);
-			  pop_linethickness();
-			}
-
-            checkPicBounds ( &t );
-            Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x
-                                   + HorzGap;
-            Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y/2 +
-                                   comPtr -> size.y*CurScale.y / 2;
-
-            checkPicBounds ( Coords + CurCoord + 1 );
-            break;
-
-	case LeftD :
-
-            t.x = Coords[CurCoord].x;
-            t.y = Coords[CurCoord].y-CurSize.y/2;
-
-            if (CurTrack != NoneS) {
-			  push_linethickness();
-			  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-                       t.x,
-                       t.y,
-                       trackStr,
-                       -1,0,
-                       HorzGap);
-			  pop_linethickness();
-			}
-
-            checkPicBounds ( &t );
-
-            Coords[CurCoord+1].x = Coords[CurCoord].x - 
-                                   comPtr -> size.x*CurScale.x
-				   - HorzGap;
-			Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y/2 +
-				   comPtr -> size.y*CurScale.y / 2;
-
-            checkPicBounds ( Coords + CurCoord + 1 );
-            
-	    break;
-
-	default:
-	    break;
 	}
-	CurCoord++;
-	CurSize.x = comPtr -> size.x*CurScale.x;
-	CurSize.y = comPtr -> size.y*CurScale.y;
 
-    }
+	/* dump command */
 
-	tprintf("%%%s %f,%f\n",
+	tprintf ( "%%%s %f,%f\n",
 		comPtr -> name,
 		comPtr -> size.x,
-			comPtr -> size.y );
+		comPtr -> size.y );
+
+	/* do command */
 
     switch ( comPtr -> command ) {
 
-    case Skip :
-	if (sscanf(pList,"%f %f %f %f",&x,&y,&x1,&y1) == 4) {
-	    VertGap = y;
-	    HorzGap = x;
-	    TrackX = x1;
-	    TrackY = y1;
-	}
-	break;
+    case Skip:
+		if ( sscanf ( pList, "%f %f %f %f", &x, &y, &x1, &y1 ) == 4 ) {
+		    vertGap = y;
+		    horzGap = x;
+		    trackX = x1;
+		    trackY = y1;
+		}
+		break;
 
-    case TxtPos :
-	CurPos[0]=CurBoxPos[0]=leader[0]=tailer[0]=EOS;
-	sscanf(pList,"%s %s %s %s",CurPos,CurBoxPos,leader,tailer);
-	setSpace ( leader,tailer );
-
-	break;
+    case TxtPos:
+		curPos[ 0 ] = curBoxPos[ 0 ] = leader[ 0 ] = tailer[ 0 ] = EOS;
+		sscanf ( pList,"%s %s %s %s", curPos, curBoxPos, leader, tailer );
+		setSpace ( leader, tailer );
+		break;
 
     case Box :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\framebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-               Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos);
-	    doText();
-	    tprintf("}}}\n");
+		init = TRUE;
+
+		drawFramePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawBox ( coords[curCoord], curSize );
+
+		break;
+
+    case Tilt:
+		init = TRUE;
+
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawTilt ( coords[curCoord], curSize );
+
+		break;
+
+    case Drum:
+		init = TRUE;
+
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawDrum ( coords[curCoord], curSize );
+
+		break;
+
+    case Call:
+		init = TRUE;
+
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawCall ( coords[curCoord], curSize );
+
+		break;
+
+    case Text:
+		init = TRUE;
+
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawBox ( coords[curCoord], curSize );
+
+		break;
+
+    case Oval:
+		init = TRUE;
+
+		drawOval ( coords[curCoord], curSize );
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+
+		break;
+
+    case Choice:
+		init = TRUE;
     
-        checkPicBoundsRng (
-            Coords[CurCoord].x,
-            Coords[CurCoord].y-CurSize.y,
-            CurSize.x,
-            CurSize.y
-        );
-
-	break;
-
-    case Tilt :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos);
-	doText();
-	tprintf("}}}\n");
-
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+1./6.*CurSize.y,
-		       Coords[CurCoord].y,
-		       1,0,
-		       CurSize.x);
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x-1./6.*CurSize.y,
-		       Coords[CurCoord].y-CurSize.y,
-		       1,0,
-		       CurSize.x);
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x-1./6.*CurSize.y,
-		       Coords[CurCoord].y-CurSize.y,
-		       1,3,
-		       CurSize.y*1./3.);
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x-1./6.*CurSize.y+CurSize.x,
-		       Coords[CurCoord].y-CurSize.y,
-		       1,3,
-		       CurSize.y*1./3.);
-
-    checkPicBoundsRng (
-        Coords[CurCoord].x-1./6.*CurSize.y,
-        Coords[CurCoord].y-CurSize.y,
-        CurSize.x + 1./6.*CurSize.y,
-        CurSize.y
-    );
-
-	break;
-
-    case Drum :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos);
-	doText();
-	tprintf("}}}\n");
-	/* up */
-	tprintf("\\put(%3.4f,%3.4f){\\oval(%3.4f,%3.4f)}\n",
-		       Coords[CurCoord].x+CurSize.x/2.0,
-		       Coords[CurCoord].y-0.5,
-		       CurSize.x,1.0);
-	/* down */
-	tprintf("\\put(%3.4f,%3.4f){\\oval(%3.4f,%3.4f)[b]}\n",
-		       Coords[CurCoord].x+CurSize.x/2.0,
-		       Coords[CurCoord].y-CurSize.y+0.5,
-		       CurSize.x,1.0);
-	/* left */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y+0.5,
-		       0,1,
-		       CurSize.y-1.0);
-	/* right */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x,
-		       Coords[CurCoord].y-CurSize.y+0.5,
-		       0,1,
-		       CurSize.y-1.0);
-
-    checkPicBoundsRng (
-        Coords[CurCoord].x,
-        Coords[CurCoord].y-CurSize.y-1.5,
-        CurSize.x,
-        CurSize.y+2.0
-    );
-
-	break;
-
-    case Call :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos);
-	doText();
-	tprintf("}}}\n");
-
-	/* up */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y,
-		       1,0,
-		       CurSize.x);
-	/* down */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       1,0,
-		       CurSize.x);
-	/* left */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       0,1,
-		       CurSize.y);
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+0.1,
-		       Coords[CurCoord].y-CurSize.y,
-		       0,1,
-		       CurSize.y);
-	/* right */
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x,
-		       Coords[CurCoord].y-CurSize.y,
-		       0,1,
-		       CurSize.y);
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x-0.1,
-		       Coords[CurCoord].y-CurSize.y,
-		       0,1,
-		       CurSize.y);
-
-    checkPicBoundsRng (
-        Coords[CurCoord].x,
-        Coords[CurCoord].y-CurSize.y,
-        CurSize.x,
-        CurSize.y
-    );
-
-	break;
-
-    case Text :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos);
-	doText();
-	tprintf("}}}\n");
-
-    checkPicBoundsRng (
-        Coords[CurCoord].x,
-        Coords[CurCoord].y-CurSize.y,
-        CurSize.x,
-        CurSize.y
-    );
-	break;
-
-    case Oval :
-	init=1;
-	tprintf("\\put(%3.4f,%3.4f){\\oval(%3.4f,%3.4f)}\n",
-		       Coords[CurCoord].x+CurSize.x/2,
-		       Coords[CurCoord].y-CurSize.y/2,
-		       CurSize.x,
-		       CurSize.y );
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos );
-	doText();
-	tprintf("}}}\n");
-    checkPicBoundsRng (
-        Coords[CurCoord].x,
-        Coords[CurCoord].y-CurSize.y,
-        CurSize.x,
-        CurSize.y
-    );
-
-	break;
-
-    case Choice :
-
-	init=1;
+    	xs = (int)curSize.x; ys = (int)curSize.y; 
     
-    xs = (int)CurSize.x; ys = (int)CurSize.y; 
-    
-    for (i = (xs>ys) ? xs : ys; i>1; i--) {
-        if ( (xs % i) == 0 && (ys % i) == 0 ) {
-            xs /= i;
-            ys /= i;
-            i = (xs>ys) ? xs : ys;
-        }
-    }
+    	for ( i = (xs > ys) ? xs : ys; i > 1; i-- ) {
+        	if ( (xs % i) == 0 && (ys % i) == 0 ) {
+				xs /= i;
+				ys /= i;
+				i = (xs>ys) ? xs : ys;
+	        }
+	    }
     
     if (xs>6) {
 		errout ( W_ASPECT );
@@ -466,253 +266,204 @@ etc. as required
     }
     
 	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      Coords[CurCoord].x,
-		      Coords[CurCoord].y-CurSize.y/2,
-		      xs,ys,CurSize.x/2
+		      coords[curCoord].x,
+		      coords[curCoord].y-curSize.y/2,
+		      xs,ys,curSize.x/2
 		      );
 	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      Coords[CurCoord].x,
-		      Coords[CurCoord].y-CurSize.y/2,
-		      xs,-ys,CurSize.x/2
+		      coords[curCoord].x,
+		      coords[curCoord].y-curSize.y/2,
+		      xs,-ys,curSize.x/2
 		      );
 	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      Coords[CurCoord].x+CurSize.x,
-		      Coords[CurCoord].y-CurSize.y/2,
-		      -xs,-ys,CurSize.x/2
+		      coords[curCoord].x+curSize.x,
+		      coords[curCoord].y-curSize.y/2,
+		      -xs,-ys,curSize.x/2
 		      );
 	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      Coords[CurCoord].x+CurSize.x,
-		      Coords[CurCoord].y-CurSize.y/2,
-		      -xs,ys,CurSize.x/2
+		      coords[curCoord].x+curSize.x,
+		      coords[curCoord].y-curSize.y/2,
+		      -xs,ys,curSize.x/2
 		      );
-	tprintf("\\put(%3.4f,%3.4f){\\makebox(%3.4f,%3.4f)%s{\\shortstack%s{\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y,
-		       CurSize.x,
-		       CurSize.y,
-		       CurBoxPos,
-		       CurPos );
-	doText();
-        tprintf("}}}\n");
-        
+
+		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+  
         sscanf(pList,"%s %s %s %s",params[0],params[1],params[2],params[3]);
 
         if (params[0][0] != '.')
 	    tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
-                           Coords[CurCoord].x+
-                           CurSize.x*0.65,
-                           Coords[CurCoord].y,
-                           params[0]
-                          );
-                           
+						   coords[curCoord].x+
+						   curSize.x*0.65,
+						   coords[curCoord].y,
+						   params[0]
+						  );
+						   
         if (params[1][0] != '.')
-            tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[rt]{%s}}\n",
-                           Coords[CurCoord].x,
-                           Coords[CurCoord].y-
-                           CurSize.y/2.*0.7,
-                           params[1]
-                          );
-                           
+			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[rt]{%s}}\n",
+						   coords[curCoord].x,
+						   coords[curCoord].y-
+						   curSize.y/2.*0.7,
+						   params[1]
+						  );
+						   
         if (params[2][0] != '.')
-            tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
-                           Coords[CurCoord].x+
-			   CurSize.x,
-                           Coords[CurCoord].y-
-			   CurSize.y/2.*0.7,
-                           params[2]
-                          );
-                           
+			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
+						   coords[curCoord].x+
+			   curSize.x,
+						   coords[curCoord].y-
+			   curSize.y/2.*0.7,
+						   params[2]
+						  );
+						   
         if (params[3][0] != '.')
-            tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lb]{%s}}\n",
-                           Coords[CurCoord].x+
-                           CurSize.x*0.65,
-                           Coords[CurCoord].y-
-                           CurSize.y,
-                           params[3]
-                          );
-                           
+			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lb]{%s}}\n",
+						   coords[curCoord].x+
+						   curSize.x*0.65,
+						   coords[curCoord].y-
+						   curSize.y,
+						   params[3]
+						  );
+						   
     checkPicBoundsRng (
-        Coords[CurCoord].x,
-        Coords[CurCoord].y-CurSize.y,
-        CurSize.x,
-        CurSize.y
+        coords[curCoord].x,
+        coords[curCoord].y-curSize.y,
+        curSize.x,
+        curSize.y
     );
         break;
 
-    case SetTrack :
-        sscanf(pList,"%s",params[0]);
-        
-	if ( strcmp("arrow",params[0]) == 0)
-            CurTrack = ArrowS;
-	if ( strcmp("line",params[0]) == 0)
-            CurTrack = LineS;
-        if ( strcmp("none",params[0]) == 0)
-            CurTrack = NoneS;
+    case SetTrack:
+        sscanf ( pList, "%s", params[ 0 ] );
+
+		if ( !strcmp ( "arrow", params[ 0 ] ) ) {
+			curTrack = ArrowS;
+		} else if ( !strcmp ( "line", params[ 0 ] ) ) {
+			curTrack = LineS;
+		} else if ( !strcmp ( "none", params[ 0 ] ) ) {
+			curTrack = NoneS;
+		}
     
         break;
 
-    case SetWidth :
+    case SetWidth:
         sscanf ( pList, "%s", params[ 0 ] );
 
-		if ( strcmp ( "thick", params [ 0 ] ) == 0 ) {
+		if ( !strcmp ( "thick", params [ 0 ] ) ) {
 			set_linelinethickness ( LINE_WIDTH_THICK );
-		} else if ( strcmp ( "thin", params [ 0 ] ) == 0 ) {
+		} else if ( !strcmp ( "thin", params [ 0 ] ) ) {
 			set_linelinethickness ( LINE_WIDTH_THIN );
 		} else {
 			set_linelinethickness ( atof ( params [ 0 ] ) );
 		}
         break;
 
-    case Scale :
-        sscanf(pList,"%f %f",&CurScale.x,&CurScale.y);
+    case Scale:
+        sscanf ( pList, "%f %f", &curScale.x, &curScale.y );
         break;
 
-    case Tag :
-        tempTag = (ATag*)malloc(sizeof(ATag));
-        tempTag->size.x = CurSize.x;
-        tempTag->size.y = CurSize.y;
-        tempTag->pos.x = Coords[CurCoord].x;
-        tempTag->pos.y = Coords[CurCoord].y;
-        tempTag->next = CurTag;
-	CurTag = tempTag;
+    case Tag:
+        tempTag = xalloc( ATag );
+        tempTag -> size.x = curSize.x;
+        tempTag -> size.y = curSize.y;
+        tempTag -> pos.x = coords[ curCoord ].x;
+        tempTag -> pos.y = coords[ curCoord ].y;
+        tempTag -> next = curTag;
+		curTag = tempTag;
         break;
 
-    case ToTag :
+    case ToTag:
     
-        if ( CurTag == NULL ) {
+        if ( curTag == NULL ) {
 		  	errout ( E_TAG_STACK_EMPTY );
-            break;
+			break;
         }
-        tempTag = CurTag;
-        CurSize.x = tempTag->size.x;
-        CurSize.y = tempTag->size.y;
-        Coords[CurCoord].x = tempTag->pos.x;
-        Coords[CurCoord].y = tempTag->pos.y;
+
+        tempTag = curTag;
+        curSize.x = tempTag -> size.x;
+        curSize.y = tempTag -> size.y;
+        coords[ curCoord ].x = tempTag -> pos.x;
+        coords[ curCoord ].y = tempTag -> pos.y;
         
-        CurTag = tempTag->next;
-        
-        free(tempTag);
-        
+        curTag = tempTag -> next;
+
+        xfree( tempTag );
+
         break;
 
-    case Right :
-	CurDirec = RightD;
-	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
-	    init=1;
-	    dimen *= TrackX;
-	    if (CurTrack != NoneS) {
-		  push_linethickness();
-		  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x,
-		       Coords[CurCoord].y-CurSize.y/2,
-		       (params[0][0]=='*')?"vector":"line",
-		       1,0,
-		       dimen);
-		  pop_linethickness();
+		/* Direction */
+    case Right:
+    case Down:
+    case Left:
+    case Up:
+
+	    switch ( comPtr -> command ) {
+		case Right:
+			curDirec = RightD;
+			break;
+	    case Down:
+			curDirec = DownD;
+			break;
+	    case Left:
+			curDirec = LeftD;
+			break;
+	    case Up:
+			curDirec = UpD;
+			break;
 		}
 
-	    Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x +
-				   dimen;
+				/* if argments exists */
+		if ( sscanf ( pList, "%f %19s", &dimen, params[0] ) >= 1 ) {
+			init = TRUE;
 
-	    Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y/2;
+			switch ( comPtr -> command ) {
+			case Right:
+				dimen *= trackX;
+				t.x = coords[ curCoord ].x + curSize.x;
+				t.y = coords[ curCoord ].y - curSize.y / 2;
+				s.x = dimen;
+				s.y = 0;
+				break;
 
-	    CurCoord++;
+			case Down:
+				dimen *= trackY;
+				t.x = coords[ curCoord ].x + curSize.x / 2;
+				t.y = coords[ curCoord ].y - curSize.y;
+				s.x = - comPtr -> size.x / 2;
+				s.y = - dimen;
+				break;
 
-	    CurSize = comPtr -> size;
-	}
-        checkPicBounds ( &( Coords[ CurCoord ] ) );
-	break;
+			case Left:
+				dimen *= trackX;
+				t.x = coords[ curCoord ].x;
+				t.y = coords[ curCoord ].y - curSize.y / 2;
+				s.x = - dimen;
+				s.y = 0;
+				break;
 
-    case Down :
-	CurDirec = DownD;
+			case Up:
+				dimen *= trackY;
+				t.x = coords[ curCoord ].x + curSize.x / 2;
+				t.y = coords[ curCoord ].y;
+				s.x = - comPtr -> size.x / 2;
+				s.y = dimen;
+				break;
+			}
 
-	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
-	    init=1;
-	    dimen *= TrackY;
-	    if (CurTrack != NoneS)	{
-		  push_linethickness();
-		  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x/2,
-		       Coords[CurCoord].y-CurSize.y,
-		       (params[0][0]=='*')?"vector":"line",
-		       0,-1,
-		       dimen);
-		  pop_linethickness();
+			drawLine ( curTrack, params[0][0], t, curDirec, dimen );
+
+			coords[ curCoord + 1 ].x = t.x + s.x;
+			coords[ curCoord + 1 ].y = t.y + s.y;
+
+			curCoord++;
+
+			curSize = comPtr -> size;
 		}
 
-	    Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
-				   comPtr -> size.x / 2;
+        checkPicBounds ( coords + curCoord );
+		break;
 
-	    Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y
-				   - dimen;
-
-	    CurCoord++;
-
-	    CurSize = comPtr -> size;
-	}
-        checkPicBounds ( &( Coords[ CurCoord ] ) );
-
-	break;
-
-    case Left :
-	CurDirec = LeftD;
-	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
-	    init=1;
-	    dimen *= TrackX;
-	    if (CurTrack != NoneS) {
-		  push_linethickness();
-		  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x,
-		       Coords[CurCoord].y-CurSize.y/2,
-		       (params[0][0]=='*')?"vector":"line",
-		       -1,0,
-		       dimen);
-		  pop_linethickness();
-		}
-
-	    Coords[CurCoord+1].x = Coords[CurCoord].x -
-				   dimen;
-
-	    Coords[CurCoord+1].y = Coords[CurCoord].y - CurSize.y/2;
-
-	    CurCoord++;
-
-	    CurSize = comPtr -> size;
-	}
-        checkPicBounds ( &( Coords[ CurCoord ] ) );
-	break;
-
-    case Up :
-	CurDirec = UpD;
-	if (sscanf(pList,"%f %19s",&dimen,params[0])>=1) {
-	    init=1;
-	    dimen *= TrackY;
-	    if (CurTrack != NoneS) {
-  		  push_linethickness();
-		  tprintf("\\put(%3.4f,%3.4f){\\%s(%d,%d){%3.4f}}\n",
-		       Coords[CurCoord].x+CurSize.x/2,
-		       Coords[CurCoord].y,
-                       (params[0][0]=='*')?"vector":"line",
-                       0,1,
-                       dimen);
-  		  pop_linethickness();
-		}
-                       
-            Coords[CurCoord+1].x = Coords[CurCoord].x + CurSize.x/2 -
-                                   comPtr -> size.x / 2;
-
-            Coords[CurCoord+1].y = Coords[CurCoord].y +
-                                   dimen;
-                                   
-            CurCoord++;
-                                   
-            CurSize = comPtr -> size;
-        }
-        checkPicBounds ( &( Coords[ CurCoord ] ) );
-        break;
-
-    case Comment :
-	break;
+    case Comment:
+		break;
 
     default:
 		errout ( E_UNKNOWN_COMMAND, comPtr -> command );
@@ -720,7 +471,7 @@ etc. as required
     }
     
     if ( comPtr -> command != Scale ) {
-		CurScale.x = CurScale.y = 1.;
+		curScale.x = curScale.y = 1.;
 	}
 
     return 1;

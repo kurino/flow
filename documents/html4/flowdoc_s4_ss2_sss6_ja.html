@@ -709,13 +709,13 @@ function setOHPHandler() {
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id613" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id647" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Up, Down, Left, Right コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Up, Down, Left, Right コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss7_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id1059">Up, Down, Left, Right コマンド</h4>
+<h4 id="doc1_id1086">Up, Down, Left, Right コマンド</h4>
 
 
 <dl>
@@ -726,12 +726,12 @@ Left  [d [*]]
 Right [d [*]]
 </pre>
 <dt>機能
-<dd><p>これらのコマンドは，オプション・パラメータの有無にかかわらず，現時点でのフローチャートの向きを変えます．オプション・パラメータを指定すると，<span>SetTrack</span>が<span>line</span><em>または</em><span>arrow</span>のときは線が引かれ，<span>none</span>のときは空きができます．線または空きの長さは<span>d</span>．省略すると<span>Box</span>，<span>Oval</span>，<span>Tilt</span>, <span>Call</span>, <span>Drum</span>および<span>Text</span>は横4，縦2単位長．<span>Choice</span>は縦横とも4単位長．オブジェクトをつなぐ矢印は1単位長．よって，現在の方向が下向きの場合，ボックスを一つ描くには2 + 1 = 3単位長の高さが必要です．</p>
-<p>オブジェクトを指定しないで直線を矢印で終わらせるには，``d''の次に空白を一つ置いて``*''を指定します。</p>
+<dd><p>これらのコマンドは、オプション・パラメータの有無にかかわらず、現時点でのフローチャートの向きを変えます。オプション・パラメータを指定すると、<span>SetTrack</span>が<span>line</span><em>または</em><span>arrow</span>の時には線が引かれ、<span>none</span>の時には空きができます。線または空きの長さは<span>d</span>で指定します。初期値は、<span>Box</span>、<span>Oval</span>、<span>Tilt</span>, <span>Call</span>, <span>Drum</span>および<span>Text</span>が横4、縦2 <span>\unitlength</span>です。<span>Choice</span>は縦横とも4 <span>\unitlength</span>です。オブジェクトをつなぐ矢印は1 <span>\unitlength</span>です。よって、現在の方向が下向きの場合、ボックスを一つ描くには2 + 1 = 3 <span>\unitlength</span>の高さが必要です。</p>
+<p>オブジェクトを指定しないで直線を矢印で終わらせるには、``d''の次に空白を一つ置いて``*''を指定します。</p>
 <dt>入力例
 <dd><a href="sample/up-ja.flow"> up-ja.flow </a>
 
-<pre src="up-ja.flow">Right 1
+<pre src="sample/up-ja.flow">Right 1
 Box
   前へ
   流れる．
@@ -757,7 +757,7 @@ Oval
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id613" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id647" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Up, Down, Left, Right コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Up, Down, Left, Right コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss7_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>

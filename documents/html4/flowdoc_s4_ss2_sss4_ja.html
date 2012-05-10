@@ -709,13 +709,13 @@ function setOHPHandler() {
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id613" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id647" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id871">SetTrack, TxtPos, SetWidth コマンド</h4>
+<h4 id="doc1_id895">SetTrack, TxtPos, SetWidth コマンド</h4>
 
 
 <dl>
@@ -723,28 +723,28 @@ function setOHPHandler() {
 <dd><pre src="settrack.stx">SetTrack none | arrow | line
 </pre>
 <dt>機能
-<dd>ボックス間を線でつなぐかつながないか，つなぐならば矢印ありかなしか，を指定．
+<dd>ボックス間を線でつなぐかつながないか、つなぐならば矢印ありかなしか、を指定します。
 <dt>書き方
 <dd><pre src="setwidth.stx">SetWidth thick | thin | #
 
 </pre>
 <dt>機能
-<dd><p><span>SetWidth</span> <span class="note"><a href="#doc1_id911" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[sk] SetWidthも+k-0.01から追加。"><sup>(2)</sup></a></span>ボックス間の線を引く場合の線の太さを指定。標準は、0.8となっており、thickと指定すると、この標準の0.8になる。thinと指定した場合は、0.4になり、少し細くなる。直接、数値を指定する事も可能だが、余りに太いと、矢印に見えなくなってしまう。</p>
-<p>thickでもthinでもなく、また数値と解釈できない( atofの仕様による)か、あるいは0.0以下の太さが指定された場合は、強制的に、標準値( 0.8 )に戻してしまう。</p>
+<dd><p><span>SetWidth</span> <span class="note"><a href="#doc1_id935" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[sk] SetWidthも+k-0.01から追加。"><sup>(3)</sup></a></span>ボックス間の線を引く場合の線の太さを指定します。初期値は、0.8 emとなっており、thickと指定すると、この標準の0.8 emになります。thinと指定した場合は、0.4 emになり、少し細くなります。直接、数値を指定する事も可能ですが、余りに太いと、矢印に見えなくなってしまうようです。</p>
+<p>thickでもthinでもなく、また数値と解釈できない<span class="note"><a href="#doc1_id938" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="atofの仕様による"><sup>(4)</sup></a></span>か、あるいは0.0以下の太さが指定された場合は、強制的に、標準値( 0.8 em )に戻してしまいます。</p>
 <dt>書き方
 <dd><pre src="txtpos.stx">TxtPos P1 P2 [B [A]]
 
 </pre>
 <dt>機能
-<dd><span>P1</span>も<span>P2</span>も
+<dd><span>P1</span>も<span>P2</span>も、
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-の位置仕様(例えば[c]や[l])．<span>P1</span>は行ごとのテキストの位置仕様，<span>P2</span>はボックス内のテキスト全体の位置仕様．<span>B</span>は各テキスト行の前(before)に置く文字列(空白は指定できない)，<span>A</span>は各テキスト行の後(after)に置く文字列．次の例の二番目ではBを指定してテキストをボックスの左側の辺から少し離しています．
+の位置仕様(例えば[c]や[l])と同じです。<span>P1</span>は、行ごとのテキストの位置仕様、<span>P2</span>は、ボックス内のテキスト全体の位置仕様となります。<span>B</span>は各テキスト行の前(before)に置く文字列(空白は指定できない)、<span>A</span>は各テキスト行の後(after)に置く文字列となります。次の例の二番目ではBを指定してテキストをボックスの左側の辺から少し離しています。
 <dt>入力例
 <dd><a href="sample/txtpos-ja.flow"> txtpos-ja.flow </a>
 
-<pre src="txtpos-ja.flow">Right
+<pre src="sample/txtpos-ja.flow">Right
 SetTrack arrow
 TxtPos [l] [l]
 Box 3.5 2
@@ -779,7 +779,7 @@ Box
 
 <div class="footnote">
 <ol>
-<li id="doc1_id911" value="2"> [sk] SetWidthも+k-0.01から追加。</ol>
+<li id="doc1_id935" value="3"> [sk] SetWidthも+k-0.01から追加。<li id="doc1_id938" value="4"> atofの仕様による</ol>
 </div>
 
 <div class="navigatorbottom">
@@ -790,7 +790,7 @@ Box
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id613" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id647" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>

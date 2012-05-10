@@ -715,17 +715,13 @@ function setOHPHandler() {
 </table>
 </div>
 
-<h2 id="doc4_id7423">VMS notes</h2>
+<h2 id="doc4_id7990">VMS notes</h2>
 
 <p class="first_ja">I don't know much VMS, but this is one way of getting it to work. Compile and link as normal, then</p>
-
-<pre id="doc4_id7425" class="console">
-flow :== $$1$DIA3:[brownt1.usr.flow]flow.exe
-</pre>
-
+<p>flow :== $$1$DIA3:[brownt1.usr.flow]flow.exe</p>
 <p>where the bit in the box is the name of the drive you're working on, and <span>[brownt1.usr.flow]</span> is the appropriate path. Then use the</p>
 
-<pre id="doc4_id7430" class="console">
+<pre id="doc4_id8005" class="console">
 flow infile outfile
 </pre>
 

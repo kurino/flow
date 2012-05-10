@@ -23,6 +23,8 @@ OBJS	=	boundingbox.o	\
 			linethickness.o	\
 			pic.o	\
 			docommand.o	\
+			drawarrow.o	\
+			drawfigure.o \
 			flow.o
 
 #
@@ -68,7 +70,7 @@ install	:	flow
 #
 #
 
-git-commit:	check
+git-commit:	check/check
 	git commit
 	touch git-commit
 
@@ -91,26 +93,30 @@ status:
 #
 #
 
-PIC					=	docommand.o flow.o pic.o
+PIC					=	docommand.o flow.o pic.o drawfigure.o
 VERSION				=	flow.o
 GETCOMMAND			=	flow.o getcommand.o
 FLOWCOM				=	docommand.o flow.o ${GETCOMMAND}
-TEMPFILE			=	docommand.o flow.o tempfile.o
+TEMPFILE			=	docommand.o flow.o drawfigure.o drawarrow.o tempfile.o
 APPLAYPICWRAPPER	=	applaypicwrapper.o ${TEMPFILE}
-BOUNDINGBOX			=	bundingbox.o ${APPLAYPICWRAPPER}
-COORD				=	${FLOWCOM} ${ATAG} ${BOUNDINGBOX} ${PIC}
+BOUNDINGBOX			=	bundingbox.o ${APPLAYPICWRAPPER} drawfigure.o
+COORD				=	${FLOWCOM} ${ATAG} ${BOUNDINGBOX} ${PIC} \
+						${DRAWARROW} ${DRAWFIGURE}
 BOOL				=	${FLOWCOM} ${ERROUT}
 PARAM				=	docommand.o flow.o ${GETCOMMAND}
-TRACKSYMB			=	docommand.o
+TRACKSYMB			=	docommand.o drawarrow.o
 THECOMMANDS			=	docommand.o ${FLOWCOM}
-DIRECS				=	docommand.o
+DIRECS				=	docommand.o	drawarrow.o
 ATAG				=	docommand.o
 INFILE				=	docommand.o flow.o infile.o
 ERROUT				=	docommand.o errout.o tempfile.o infile.o getcommand.o
 EOS					=	docommand.o dotext.o infile.o getcommand.o
-LINETHICKNESS		=	docommand.o linethickness.o
+LINETHICKNESS		=	docommand.o linethickness.o drawarrow.o
 DOTEXT				=	docommand.o dotext.o
 DOCOMMAND			=	docommand.o flow.o
+DRAWARROW			=	docommand.o drawarrow.o
+DRAWFIGURE			=	docommand.o drawfigure.o
+XALLOC				=	docommand.o
 
 #
 #
@@ -136,6 +142,9 @@ ${EOS}				:	eos.h
 ${LINETHICKNESS}	:	linethickness.h
 ${DOTEXT}			:	dotext.h
 ${DOCOMMAND}		:	docommand.h
+${DRAWARROW}		:	drawarrow.h
+${DRAWFIGURE}		:	drawfigure.h
+${XALLOC}			:	xalloc.h
 
 #
 #
@@ -147,7 +156,7 @@ TAR=archives/flow-${VER}.tar.gz
 tar	:	${TAR}
 
 ${TAR}	:	COPYING Makefile README documents *.c *.h flowdoc.pdf flowdoc.tex
-	tar zcf ${TAR} $^
+	tar --exclude-from=archives/exclude-from.txt -zvcf ${TAR} $^
 
 #
 #

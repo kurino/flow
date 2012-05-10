@@ -19,7 +19,7 @@
 #define	setBCMin(B,C,X) setMin( B -> min.X, C -> X )
 #define	setBCMax(B,C,X) setMax( B -> max.X, C -> X )
 
-void checkBounds ( BoundingBox *b, Coord *c ) {
+void checkBounds ( BoundingBox *b, const Coord *c ) {
 
   setBCMin ( b, c, x );
   setBCMax ( b, c, x );

@@ -31,7 +31,7 @@ BoundingBox	getPic ( void ) {
  *
  */
 
-void	checkPicBounds ( Coord *c ) {
+void	checkPicBounds ( const Coord *c ) {
 
 	checkBounds ( &pic, c );
 }

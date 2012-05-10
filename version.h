@@ -13,7 +13,7 @@
  *	constants
  */
 
-#define VERSION "0.99g+k-0.02"
+#define VERSION "0.99g+k-0.03 (2012/05/10)"
 
 /*
  *	typedefs

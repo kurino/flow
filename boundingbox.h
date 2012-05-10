@@ -28,7 +28,7 @@ typedef struct {
  *	externs
  */
 
-extern void checkBounds ( BoundingBox *b, Coord *c );
+extern void checkBounds ( BoundingBox *b, const Coord *c );
 
 extern void checkBoundsRng(
     BoundingBox *b, 
