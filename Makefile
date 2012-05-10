@@ -82,6 +82,13 @@ git-push:	git-commit
 #
 #
 
+commit:	git-commit
+push:	git-push
+
+#
+#
+#
+
 amend:
 	git commit --amend
 	touch git-commit
@@ -109,7 +116,8 @@ THECOMMANDS			=	docommand.o ${FLOWCOM}
 DIRECS				=	docommand.o	drawarrow.o
 ATAG				=	docommand.o
 INFILE				=	docommand.o flow.o infile.o
-ERROUT				=	docommand.o errout.o tempfile.o infile.o getcommand.o
+ERROUT				=	docommand.o errout.o tempfile.o infile.o \
+						getcommand.o drawfigure.o
 EOS					=	docommand.o dotext.o infile.o getcommand.o
 LINETHICKNESS		=	docommand.o linethickness.o drawarrow.o
 DOTEXT				=	docommand.o dotext.o

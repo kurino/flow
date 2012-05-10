@@ -91,7 +91,7 @@ Revision history
 	archives
 		- Source Code Archives
 
-0.99g+k-0.03 (2012/05/07)
+0.99g+k-0.03 (2012/05/10)
 	# post refactaring version (2)
 	refactaring
 		- file split
@@ -106,3 +106,15 @@ Revision history
 			kurino@zaregoto.org and
 		- add Home Page address
 			https://github.com/kurino/flow
+
+0.99g+k-0.04 (2012/05/10)
+	# change output order
+	#	- so, this version is not compatible to older
+	#	- but, results of view are same ( maybe... )
+	change output order
+		docommand.c
+			Oval / Choice
+	README
+		about version ``0.99g+k-0.04 (2012/05/10)''
+	refactaring
+		move Choice drow code docommand.c to drawfigure.c

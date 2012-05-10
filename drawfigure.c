@@ -12,6 +12,7 @@
 #include "tempfile.h"
 #include "boundingbox.h"
 #include "pic.h"
+#include "errout.h"
 #include "drawfigure.h"
 
 /*
@@ -253,6 +254,139 @@ void drawOval ( Coord curCoord, Coord curSize ) {
 	 */
 
 	checkTextPicBoundsRng ( curCoord, curSize );
+
+	/*
+	 *
+	 */
+
+}
+
+/*
+ *
+ */
+
+#define	TEX_INCLINATION_MAX	6
+
+void drawChoice ( Coord curCoord, Coord curSize ) {
+
+	/*
+	 *
+	 */
+
+	int	i;
+	int	xs = (int)curSize.x;
+	int	ys = (int)curSize.y;
+
+	/*
+	 *
+	 */
+
+	for ( i = (xs > ys) ? xs : ys; i > 1; i-- ) {
+		if ( (xs % i) == 0 && (ys % i) == 0 ) {
+			xs /= i;
+			ys /= i;
+			i = ( xs > ys ) ? xs : ys;
+	  	}
+	}
+    
+	if ( xs > TEX_INCLINATION_MAX )	{
+		errout ( W_ASPECT );
+        xs = TEX_INCLINATION_MAX;
+    }
+    if ( ys > TEX_INCLINATION_MAX ) {
+		errout ( W_ASPECT );
+		ys = TEX_INCLINATION_MAX;
+    }
+
+	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		      curCoord.x,
+		      curCoord.y-curSize.y/2,
+		      xs,ys,curSize.x/2
+		      );
+	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		      curCoord.x,
+		      curCoord.y-curSize.y/2,
+		      xs,-ys,curSize.x/2
+		      );
+	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		      curCoord.x+curSize.x,
+		      curCoord.y-curSize.y/2,
+		      -xs,-ys,curSize.x/2
+		      );
+	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
+		      curCoord.x+curSize.x,
+		      curCoord.y-curSize.y/2,
+		      -xs,ys,curSize.x/2
+		      );
+
+	/*
+	 *
+	 */
+
+    checkPicBoundsRng (
+        curCoord.x,
+        curCoord.y - curSize.y,
+        curSize.x,
+        curSize.y
+    );
+
+	/*
+	 *
+	 */
+
+}
+
+/*
+ *
+ */
+
+void drawSelect ( Coord curCoord, Coord curSize,
+						char params0[],
+						char params1[],
+						char params2[],
+						char params3[] ) {
+
+	/*
+	 *
+	 */
+
+	if ( params0[0] != '.' )	{
+		tprintf ( "\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
+						   curCoord.x+
+						   curSize.x*0.65,
+						   curCoord.y,
+						   params0
+						  );
+	}
+						   
+	if ( params1[0] != '.' ) {
+			tprintf ( "\\put(%3.4f,%3.4f){\\makebox(0,0)[rt]{%s}}\n",
+						   curCoord.x,
+						   curCoord.y-
+						   curSize.y/2.*0.7,
+						   params1
+						  );
+	}
+
+	if ( params2[0] != '.' ) {
+			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
+						   curCoord.x+
+			   curSize.x,
+						   curCoord.y-
+			   curSize.y/2.*0.7,
+						   params2
+						  );
+	}
+						   
+	if ( params3[0] != '.' ) {
+		tprintf ( "\\put(%3.4f,%3.4f){\\makebox(0,0)[lb]{%s}}\n",
+						   curCoord.x+
+						   curSize.x*0.65,
+						   curCoord.y-
+						   curSize.y,
+						   params3
+						  );
+	}
 
 	/*
 	 *

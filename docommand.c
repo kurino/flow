@@ -77,7 +77,6 @@ etc. as required
     ATag *tempTag;
     char params[ MAX_PARAMS ][ PARAM_LENGTH ];
     float dimen,x,y,x1,y1;
-    int i,xs,ys;
     Coord t;
     Coord s;
 	char leader[ SPACEING_LENGTH ];
@@ -115,8 +114,8 @@ etc. as required
 			switch ( curDirec ) {
 		    case RightD:
 				dimen = horzGap;
-				t.x = coords[curCoord].x + curSize.x;
-				t.y = coords[curCoord].y - curSize.y / 2;
+				t.x = coords[ curCoord ].x + curSize.x;
+				t.y = coords[ curCoord ].y - curSize.y / 2;
 				s.x = horzGap;
 				s.y = comPtr -> size.y * curScale.y / 2;
 			break;
@@ -131,16 +130,16 @@ etc. as required
 
 			case LeftD:
 				dimen = horzGap;
-				t.x = coords[curCoord].x;
-				t.y = coords[curCoord].y - curSize.y / 2;
+				t.x = coords[ curCoord ].x;
+				t.y = coords[ curCoord ].y - curSize.y / 2;
 				s.x = - comPtr -> size.x * curScale.x - horzGap;
 				s.y =   comPtr -> size.y * curScale.y / 2;
 				break;
 
 			case UpD:
 				dimen = vertGap;
-				t.x = coords[curCoord].x + curSize.x / 2;
-				t.y = coords[curCoord].y;
+				t.x = coords[ curCoord ].x + curSize.x / 2;
+				t.y = coords[ curCoord ].y;
 				s.x = - comPtr -> size.x * curScale.x / 2;
 				s.y =   comPtr -> size.y * curScale.y + vertGap;
 				break;
@@ -195,7 +194,7 @@ etc. as required
 		setSpace ( leader, tailer );
 		break;
 
-    case Box :
+    case Box:
 		init = TRUE;
 
 		drawFramePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -238,98 +237,28 @@ etc. as required
     case Oval:
 		init = TRUE;
 
-		drawOval ( coords[curCoord], curSize );
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
+		drawOval ( coords[curCoord], curSize );
 
 		break;
 
     case Choice:
 		init = TRUE;
-    
-    	xs = (int)curSize.x; ys = (int)curSize.y; 
-    
-    	for ( i = (xs > ys) ? xs : ys; i > 1; i-- ) {
-        	if ( (xs % i) == 0 && (ys % i) == 0 ) {
-				xs /= i;
-				ys /= i;
-				i = (xs>ys) ? xs : ys;
-	        }
-	    }
-    
-    if (xs>6) {
-		errout ( W_ASPECT );
-        xs = 6;
-    }
-    if (ys>6) {
-		errout ( W_ASPECT );
-		ys = 6;
-    }
-    
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      coords[curCoord].x,
-		      coords[curCoord].y-curSize.y/2,
-		      xs,ys,curSize.x/2
-		      );
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      coords[curCoord].x,
-		      coords[curCoord].y-curSize.y/2,
-		      xs,-ys,curSize.x/2
-		      );
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      coords[curCoord].x+curSize.x,
-		      coords[curCoord].y-curSize.y/2,
-		      -xs,-ys,curSize.x/2
-		      );
-	tprintf("\\put(%3.4f,%3.4f){\\line(%d,%d){%3.4f}}\n",
-		      coords[curCoord].x+curSize.x,
-		      coords[curCoord].y-curSize.y/2,
-		      -xs,ys,curSize.x/2
-		      );
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
-  
-        sscanf(pList,"%s %s %s %s",params[0],params[1],params[2],params[3]);
+		drawChoice ( coords[curCoord], curSize );
 
-        if (params[0][0] != '.')
-	    tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
-						   coords[curCoord].x+
-						   curSize.x*0.65,
-						   coords[curCoord].y,
-						   params[0]
-						  );
-						   
-        if (params[1][0] != '.')
-			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[rt]{%s}}\n",
-						   coords[curCoord].x,
-						   coords[curCoord].y-
-						   curSize.y/2.*0.7,
-						   params[1]
-						  );
-						   
-        if (params[2][0] != '.')
-			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lt]{%s}}\n",
-						   coords[curCoord].x+
-			   curSize.x,
-						   coords[curCoord].y-
-			   curSize.y/2.*0.7,
-						   params[2]
-						  );
-						   
-        if (params[3][0] != '.')
-			tprintf("\\put(%3.4f,%3.4f){\\makebox(0,0)[lb]{%s}}\n",
-						   coords[curCoord].x+
-						   curSize.x*0.65,
-						   coords[curCoord].y-
-						   curSize.y,
-						   params[3]
-						  );
-						   
-    checkPicBoundsRng (
-        coords[curCoord].x,
-        coords[curCoord].y-curSize.y,
-        curSize.x,
-        curSize.y
-    );
+		params[0][0] = '.';
+		params[1][0] = '.';
+		params[2][0] = '.';
+		params[3][0] = '.';
+
+        sscanf ( pList, "%s %s %s %s",
+			params[0], params[1], params[2], params[3] );
+
+		drawSelect ( coords[curCoord], curSize,
+			params[0], params[1], params[2], params[3] );
+
         break;
 
     case SetTrack:

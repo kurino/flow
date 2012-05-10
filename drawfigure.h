@@ -32,6 +32,8 @@ extern	void drawTilt ( Coord curCoord, Coord curSize );
 extern	void drawDrum ( Coord curCoord, Coord curSize );
 extern	void drawCall ( Coord curCoord, Coord curSize );
 extern	void drawOval ( Coord curCoord, Coord curSize );
+extern	void drawChoice ( Coord curCoord, Coord curSize );
+
 
 /*
  *
