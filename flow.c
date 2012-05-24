@@ -49,10 +49,10 @@ pic environment.
  *
  */
 
-int main ( int argc, char **argv ) {
-    Param params;
-    FlowCom *comPtr = NULL;
-	char line [ LINE_LEN ];
+int main ( int argc, char *argv[] ) {
+    Param	params;
+    FlowCom	*comPtr = NULL;
+	char	line [ LINE_LEN ];
 
 	open_tempfile();
 	open_infile ( ( argc > 1 ) ? argv[ 1 ] : NULL );
@@ -76,6 +76,8 @@ int main ( int argc, char **argv ) {
 	apply_tempfile ( getPic(), ( argc > 2 ) ? argv[ 2 ] : NULL );
 
 	remove_tempfile();
+
+//	dumpFigure();
 
     return 0;    /* just to suppress the warning */
 }

@@ -14,6 +14,8 @@
 #include "bool.h"
 #include "coord.h"
 #include "flowcom.h"
+#include "dofigure.h"
+#include "token.h"
 #include "getcommand.h"
 
 /*
@@ -21,26 +23,29 @@
  */
 
 static	FlowCom fcom[] = {
-  { "SetTrack", 1, {0,0}, FALSE,	SetTrack	},
-  { "Up",       1, {0,0}, FALSE,	Up			},
-  { "Down",     1, {0,0}, FALSE,	Down		},
-  { "Left",     1, {0,0}, FALSE,	Left		},
-  { "Right",    1, {0,0}, FALSE,	Right		},
-  { "Box",      0, {4,2}, TRUE,		Box			},
-  { "Oval",     0, {4,2}, TRUE,		Oval		},
-  { "Choice",   4, {4,4}, TRUE,		Choice		},
-  { "Tag",      0, {0,0}, FALSE,	Tag			},
-  { "ToTag",    0, {0,0}, FALSE,	ToTag		},
-  { "Scale",    2, {0,0}, FALSE,	Scale		},
-  { "Tilt",     0, {4,2}, TRUE,		Tilt		},
-  { "Text",     0, {4,2}, TRUE,		Text		},
-  { "TxtPos",   4, {0,0}, FALSE,	TxtPos		},
-  { "Skip",     2, {0,0}, FALSE,	Skip		},
-  { "Drum",     0, {4,4}, TRUE,		Drum		},
-  { "Call",     0, {4,2}, TRUE,		Call		},
-  { "SetWidth", 1, {0,0}, FALSE,	SetWidth	},
-  { "%",        0, {0,0}, FALSE,	Comment		},
-  { NULL,       0, {0,0}, FALSE,	NotCommand	}
+  { "SetTrack", 1, {0,0}, FALSE,	SET_TRACK	},
+  { "Up",       1, {0,0}, FALSE,	UP			},
+  { "Down",     1, {0,0}, FALSE,	DOWN		},
+  { "Left",     1, {0,0}, FALSE,	LEFT		},
+  { "Right",    1, {0,0}, FALSE,	RIGHT		},
+  { "Box",      0, {4,2}, TRUE,		BOX			},
+  { "Oval",     0, {4,2}, TRUE,		OVAL		},
+  { "Choice",   4, {4,4}, TRUE,		CHOICE		},
+  { "Tag",      0, {0,0}, FALSE,	TAG			},
+  { "ToTag",    0, {0,0}, FALSE,	TO_TAG		},
+  { "Scale",    2, {0,0}, FALSE,	SCALE		},
+  { "Tilt",     0, {4,2}, TRUE,		TILT		},
+  { "Text",     0, {4,2}, TRUE,		TEXT		},
+  { "TxtPos",   4, {0,0}, FALSE,	TXT_POS		},
+  { "Skip",     2, {0,0}, FALSE,	SKIP		},
+  { "Drum",     0, {4,4}, TRUE,		DRUM		},
+  { "Call",     0, {4,2}, TRUE,		CALL		},
+  { "SetWidth", 1, {0,0}, FALSE,	SET_WIDTH	},
+  { "Turn",		1, {0,0}, FALSE,	TURN		},
+  { "Figure",	1, {0,0}, FALSE,	FIGURE		},
+  { "Draw",		1, {0,0}, FALSE,	DRAW		},
+  { "%",        0, {0,0}, FALSE,	COMMENT		},
+  { NULL,       0, {0,0}, FALSE,	NOT_COMMAND	}
 };
 
 /*
@@ -55,22 +60,44 @@ static	FlowCom fcom[] = {
 
 FlowCom *getCommand ( char line[], Param plist ) {
 /*
-tries to interpret the next line of inFile as a command, returns -1 if it can't
+tries to interpret the next line of inFile as a command, returns NULL if it can't
 */
 	FlowCom *command = NULL;
+	Figure *figure = NULL;
 	int i;
  	int l;
+	char token[ TOKEN_SIZE ];
+	char *pPtr = getToken ( token, line );
 
-	for ( i = 0; fcom[ i ].name != NULL; i++ ) {
-		l = strlen ( fcom[ i ].name );
-		if ( !strncmp ( fcom[ i ].name, line, l ) ) {
-		    strncpy ( plist, line + l, PARAM_LEN );
-		    return fcom + i;
+	if ( pPtr != NULL ) {
+
+		/* searching pre define command */
+		for ( i = 0; fcom[ i ].name != NULL; i++ ) {
+			if ( !strcmp ( fcom[ i ].name, token ) ) {
+				if ( fcom[ i ].command == DRAW ) {
+					if ( ( pPtr = getToken ( token, pPtr ) ) != NULL ) {
+						command = getFigureCommand ( token );
+					}
+				} else {
+				    command = fcom + i;
+				}
+				break;
+			}
+		}
+
+		/* searching figure */
+		if ( fcom[ i ].name == NULL ) {
+			command = getFigureCommand ( token );
+		}
+
+		if ( command != NULL ) {
+			strcpy ( plist, pPtr );
+			return command;
 		}
     }
 
 	if ( !eof_infile() && line[0] != EOS ) {
-	  errout ( E_INTERPRET_LINE, get_input_line() );
+		errout ( E_INTERPRET_LINE, get_input_line() );
 	}
 
 	return NULL;

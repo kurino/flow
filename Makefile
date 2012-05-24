@@ -22,9 +22,18 @@ OBJS	=	boundingbox.o	\
 			dotext.o	\
 			linethickness.o	\
 			pic.o	\
+			vcell.o vlist.o strlist.o \
+			tracksymb.o \
+			figure.o \
 			docommand.o	\
 			drawarrow.o	\
 			drawfigure.o \
+			texpicture.o \
+			figurelist.o \
+			flowcom.o \
+			token.o	\
+			dofigure.o \
+			dodraw.o \
 			flow.o
 
 #
@@ -100,31 +109,47 @@ status:
 #
 #
 
-PIC					=	docommand.o flow.o pic.o drawfigure.o
 VERSION				=	flow.o
-GETCOMMAND			=	flow.o getcommand.o
-FLOWCOM				=	docommand.o flow.o ${GETCOMMAND}
-TEMPFILE			=	docommand.o flow.o drawfigure.o drawarrow.o tempfile.o
-APPLAYPICWRAPPER	=	applaypicwrapper.o ${TEMPFILE}
-BOUNDINGBOX			=	bundingbox.o ${APPLAYPICWRAPPER} drawfigure.o
-COORD				=	${FLOWCOM} ${ATAG} ${BOUNDINGBOX} ${PIC} \
-						${DRAWARROW} ${DRAWFIGURE}
-BOOL				=	${FLOWCOM} ${ERROUT}
-PARAM				=	docommand.o flow.o ${GETCOMMAND}
-TRACKSYMB			=	docommand.o drawarrow.o
-THECOMMANDS			=	docommand.o ${FLOWCOM}
+PIC					=	docommand.o flow.o pic.o drawfigure.o
+TRACKSYMB			=	docommand.o drawarrow.o tracksymb.o
 DIRECS				=	docommand.o	drawarrow.o
 ATAG				=	docommand.o
 INFILE				=	docommand.o flow.o infile.o
 ERROUT				=	docommand.o errout.o tempfile.o infile.o \
-						getcommand.o drawfigure.o
-EOS					=	docommand.o dotext.o infile.o getcommand.o
+						getcommand.o drawfigure.o dodraw.o
+EOS					=	docommand.o dotext.o infile.o getcommand.o	\
+						token.o	dodraw.o
 LINETHICKNESS		=	docommand.o linethickness.o drawarrow.o
 DOTEXT				=	docommand.o dotext.o
 DOCOMMAND			=	docommand.o flow.o
 DRAWARROW			=	docommand.o drawarrow.o
-DRAWFIGURE			=	docommand.o drawfigure.o
-XALLOC				=	docommand.o
+DRAWFIGURE			=	docommand.o drawfigure.o dodraw.o
+XALLOC				=	docommand.o vcell.o vlist.o strlist.o figure.o
+TEXPICTURE			=	texpicture.o drawarrow.o drawfigure.o figure.o \
+						dodraw.o
+FIGURELIST			=	figurelist.o
+DOFIGURE			=	dofigure.o gotcommand.o
+#
+FIGURE				=	docommand.o figure.o figurelist.o ${DOFIGURE}
+STRLIST				=	strlist.o dodraw.o ${FIGURE}
+VLIST				=	vlist.o ${STRLIST} figurelist.o dodraw.o
+VCELL				=	vcell.o ${VLIST} dodraw.o
+#
+TEMPFILE			=	flow.o tempfile.o texpicture.o
+APPLAYPICWRAPPER	=	applaypicwrapper.o ${TEMPFILE}
+BOUNDINGBOX			=	bundingbox.o ${APPLAYPICWRAPPER} drawfigure.o
+DODRAW				=	dodraw.o	docommand.o
+#
+GETCOMMAND			=	flow.o getcommand.o
+PARAM				=	docommand.o flow.o ${GETCOMMAND}
+FLOWCOM				=	docommand.o flow.o flowcom.o \
+						${GETCOMMAND} ${FIGURE} ${DOFIGURE}
+THECOMMANDS			=	docommand.o ${FLOWCOM}
+COORD				=	${FLOWCOM} ${ATAG} ${BOUNDINGBOX} ${PIC} \
+						${DRAWARROW} ${DRAWFIGURE} ${DODRAW}
+BOOL				=	${FLOWCOM} ${ERROUT} ${FIGURE} vlist.o
+TOKEN				=	token.o	dofigure.o gotcommand.o docommand.o \
+						dodraw.o
 
 #
 #
@@ -153,6 +178,16 @@ ${DOCOMMAND}		:	docommand.h
 ${DRAWARROW}		:	drawarrow.h
 ${DRAWFIGURE}		:	drawfigure.h
 ${XALLOC}			:	xalloc.h
+${VCELL}			:	vcell.h
+${VLIST}			:	vlist.h
+${STRLIST}			:	strlist.h
+${FIGURE}			:	figure.h
+${TEXPICTURE}		:	texpicture.h
+${FIGURE}			:	figure.h
+${FIGURELIST}		:	figurelist.h
+${DOFIGURE}			:	dofigure.h
+${TOKEN}			:	token.h
+${DODRAW}			:	dodraw.h
 
 #
 #
@@ -169,3 +204,4 @@ ${TAR}	:	COPYING Makefile README documents *.c *.h flowdoc.pdf flowdoc.tex
 #
 #
 #
+

@@ -18,10 +18,10 @@
  */
 
 typedef enum {
-	UpD,
-	DownD,
-	LeftD,
-	RightD
+	UP_DIR = 0,
+	DOWN_DIR = 1,
+	LEFT_DIR = 2,
+	RIGHT_DIR = 3
 }	Direcs;
 
 /*

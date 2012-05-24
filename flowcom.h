@@ -21,17 +21,21 @@
  *	typedefs
  */
 
-typedef struct {
-	char		*name;
-	int			params;
-	Coord		size;
-	Bool		hasText;
-	TheCommands	command;
+typedef struct flowcom	{
+	char		*name;		/* name of command */
+	int			params;		/* number of params ( not used ? ) */
+	Coord		size;		/* size of figure */
+	Bool		hasText;	/* Does it have text argument ? */
+	TheCommands	command;	/* code of command */
 } FlowCom;
 
 /*
  *	externs
  */
+
+extern	FlowCom	*allocFlowCom ( char *name, int params, Coord size, Bool hasText, TheCommands command );
+extern	void	freeFlowCom ( FlowCom *fp );
+extern	void	printFlowCom ( FlowCom *fp );
 
 /*
  *

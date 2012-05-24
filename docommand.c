@@ -3,6 +3,7 @@
  */
 
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
 
 /*
@@ -26,6 +27,8 @@
 #include "pic.h"
 #include "drawarrow.h"
 #include "xalloc.h"
+#include "figure.h"
+#include "token.h"
 #include "docommand.h"
 
 /*
@@ -49,8 +52,8 @@ static Coord coords[ MAX_BOXES ] = {
 	{	0,	0	}
 };  /* just initialise first coord */
 static int curCoord = 0;
-static int curTrack = ArrowS;
-static int curDirec = DownD;
+static int curTrack = ARROW_SYMBOL;
+static int curDirec = DOWN_DIR;
 static Coord curScale = {	1.,	1.	};
 static Coord curSize = {	0.,	0.	};
 static ATag *curTag = NULL;
@@ -67,7 +70,7 @@ static float horzGap = 1.;
  *
  */
 
-int doCommand ( FlowCom *comPtr, Param pList ) {
+int doCommand ( FlowCom *comPtr, Param comArg ) {
 /*
 output the LaTeX bits for this command, updating the coords, Coord list
 etc. as required
@@ -81,14 +84,16 @@ etc. as required
     Coord s;
 	char leader[ SPACEING_LENGTH ];
 	char tailer[ SPACEING_LENGTH ];
-			   
+	TheCommands	curCommand;
+	char *pList = comArg;
+
     dimen = 0.;
-    
+
     params[ 0 ][ 0 ] = EOS;  /* so Up / Down / Left / Right can find *'s for line drawing */
 
     if ( comPtr -> hasText ) {
-	if (( comPtr -> command != Choice && sscanf(pList,"%f %f",&x,&y) == 2) ||
-	    ( comPtr -> command == Choice && sscanf(pList,"%s %s %s %s %f %f",
+	if (( comPtr -> command != CHOICE && sscanf(pList,"%f %f",&x,&y) == 2) ||
+	    ( comPtr -> command == CHOICE && sscanf(pList,"%s %s %s %s %f %f",
 				       params[0],
 				       params[0],
 				       params[0],
@@ -107,12 +112,12 @@ etc. as required
     if ( init && ( comPtr -> size.x != 0 || comPtr -> size.y != 0 ) ) {
 
 		switch ( curDirec ) {
-	    case RightD:
-		case DownD:
-		case LeftD:
-		case UpD:
+	    case RIGHT_DIR:
+		case DOWN_DIR:
+		case LEFT_DIR:
+		case UP_DIR:
 			switch ( curDirec ) {
-		    case RightD:
+		    case RIGHT_DIR:
 				dimen = horzGap;
 				t.x = coords[ curCoord ].x + curSize.x;
 				t.y = coords[ curCoord ].y - curSize.y / 2;
@@ -120,7 +125,7 @@ etc. as required
 				s.y = comPtr -> size.y * curScale.y / 2;
 			break;
 
-			case DownD:
+			case DOWN_DIR:
 				dimen = vertGap;
 				t.x = coords[ curCoord ].x + curSize.x / 2;
 				t.y = coords[ curCoord ].y - curSize.y;
@@ -128,7 +133,7 @@ etc. as required
 				s.y = - vertGap;
 				break;
 
-			case LeftD:
+			case LEFT_DIR:
 				dimen = horzGap;
 				t.x = coords[ curCoord ].x;
 				t.y = coords[ curCoord ].y - curSize.y / 2;
@@ -136,7 +141,7 @@ etc. as required
 				s.y =   comPtr -> size.y * curScale.y / 2;
 				break;
 
-			case UpD:
+			case UP_DIR:
 				dimen = vertGap;
 				t.x = coords[ curCoord ].x + curSize.x / 2;
 				t.y = coords[ curCoord ].y;
@@ -177,9 +182,9 @@ etc. as required
 
 	/* do command */
 
-    switch ( comPtr -> command ) {
+    switch ( curCommand = comPtr -> command ) {
 
-    case Skip:
+    case SKIP:
 		if ( sscanf ( pList, "%f %f %f %f", &x, &y, &x1, &y1 ) == 4 ) {
 		    vertGap = y;
 		    horzGap = x;
@@ -188,13 +193,13 @@ etc. as required
 		}
 		break;
 
-    case TxtPos:
+    case TXT_POS:
 		curPos[ 0 ] = curBoxPos[ 0 ] = leader[ 0 ] = tailer[ 0 ] = EOS;
-		sscanf ( pList,"%s %s %s %s", curPos, curBoxPos, leader, tailer );
+		sscanf ( pList, "%s %s %s %s", curPos, curBoxPos, leader, tailer );
 		setSpace ( leader, tailer );
 		break;
 
-    case Box:
+    case BOX:
 		init = TRUE;
 
 		drawFramePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -202,7 +207,7 @@ etc. as required
 
 		break;
 
-    case Tilt:
+    case TILT:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -210,7 +215,7 @@ etc. as required
 
 		break;
 
-    case Drum:
+    case DRUM:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -218,7 +223,7 @@ etc. as required
 
 		break;
 
-    case Call:
+    case CALL:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -226,7 +231,7 @@ etc. as required
 
 		break;
 
-    case Text:
+    case TEXT:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -234,7 +239,7 @@ etc. as required
 
 		break;
 
-    case Oval:
+    case OVAL:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -242,7 +247,7 @@ etc. as required
 
 		break;
 
-    case Choice:
+    case CHOICE:
 		init = TRUE;
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
@@ -261,20 +266,14 @@ etc. as required
 
         break;
 
-    case SetTrack:
+    case SET_TRACK:
         sscanf ( pList, "%s", params[ 0 ] );
 
-		if ( !strcmp ( "arrow", params[ 0 ] ) ) {
-			curTrack = ArrowS;
-		} else if ( !strcmp ( "line", params[ 0 ] ) ) {
-			curTrack = LineS;
-		} else if ( !strcmp ( "none", params[ 0 ] ) ) {
-			curTrack = NoneS;
-		}
-    
+		curTrack = stringToTrackSymb ( params[ 0 ] );
+
         break;
 
-    case SetWidth:
+    case SET_WIDTH:
         sscanf ( pList, "%s", params[ 0 ] );
 
 		if ( !strcmp ( "thick", params [ 0 ] ) ) {
@@ -286,11 +285,11 @@ etc. as required
 		}
         break;
 
-    case Scale:
+    case SCALE:
         sscanf ( pList, "%f %f", &curScale.x, &curScale.y );
         break;
 
-    case Tag:
+    case TAG:
         tempTag = xalloc( ATag );
         tempTag -> size.x = curSize.x;
         tempTag -> size.y = curSize.y;
@@ -300,7 +299,7 @@ etc. as required
 		curTag = tempTag;
         break;
 
-    case ToTag:
+    case TO_TAG:
     
         if ( curTag == NULL ) {
 		  	errout ( E_TAG_STACK_EMPTY );
@@ -308,11 +307,12 @@ etc. as required
         }
 
         tempTag = curTag;
+
         curSize.x = tempTag -> size.x;
         curSize.y = tempTag -> size.y;
         coords[ curCoord ].x = tempTag -> pos.x;
         coords[ curCoord ].y = tempTag -> pos.y;
-        
+
         curTag = tempTag -> next;
 
         xfree( tempTag );
@@ -320,23 +320,70 @@ etc. as required
         break;
 
 		/* Direction */
-    case Right:
-    case Down:
-    case Left:
-    case Up:
+    case TURN:
+		pList = skipSpace ( pList );
+		sscanf ( pList, "%s", params[ 0 ] );
+		if ( !strncmp ( params[ 0 ], "right", strlen ( "right" ) ) ) {
+		  curCommand = RIGHT;
+		  pList = skipToken ( pList );
+		} else if ( !strncmp ( params[ 0 ], "left", strlen ( "left" ) ) ) {
+		  curCommand = LEFT;
+		  pList = skipToken ( pList );
+		} else {
+		  curCommand = RIGHT;
+		}
 
-	    switch ( comPtr -> command ) {
-		case Right:
-			curDirec = RightD;
+		switch ( curCommand ) {
+	    case RIGHT:
+			switch ( curDirec ) {
+	    	case RIGHT_DIR:
+				curCommand = DOWN;
+				break;
+			case DOWN_DIR:
+				curCommand = LEFT;
+				break;
+			case LEFT_DIR:
+				curCommand = UP;
+				break;
+			case UP_DIR:
+				curCommand = RIGHT;
+				break;
+			}
 			break;
-	    case Down:
-			curDirec = DownD;
+	    case LEFT:
+			switch ( curDirec ) {
+	    	case RIGHT_DIR:
+				curCommand = UP;
+				break;
+			case DOWN_DIR:
+				curCommand = RIGHT;
+				break;
+			case LEFT_DIR:
+				curCommand = DOWN;
+				break;
+			case UP_DIR:
+				curCommand = LEFT;
+				break;
+			}
+		}
+		// break;
+    case RIGHT:
+    case DOWN:
+    case LEFT:
+    case UP:
+
+	    switch ( curCommand ) {
+		case RIGHT:
+			curDirec = RIGHT_DIR;
 			break;
-	    case Left:
-			curDirec = LeftD;
+	    case DOWN:
+			curDirec = DOWN_DIR;
 			break;
-	    case Up:
-			curDirec = UpD;
+	    case LEFT:
+			curDirec = LEFT_DIR;
+			break;
+	    case UP:
+			curDirec = UP_DIR;
 			break;
 		}
 
@@ -344,8 +391,8 @@ etc. as required
 		if ( sscanf ( pList, "%f %19s", &dimen, params[0] ) >= 1 ) {
 			init = TRUE;
 
-			switch ( comPtr -> command ) {
-			case Right:
+			switch ( curCommand ) {
+			case RIGHT:
 				dimen *= trackX;
 				t.x = coords[ curCoord ].x + curSize.x;
 				t.y = coords[ curCoord ].y - curSize.y / 2;
@@ -353,7 +400,7 @@ etc. as required
 				s.y = 0;
 				break;
 
-			case Down:
+			case DOWN:
 				dimen *= trackY;
 				t.x = coords[ curCoord ].x + curSize.x / 2;
 				t.y = coords[ curCoord ].y - curSize.y;
@@ -361,7 +408,7 @@ etc. as required
 				s.y = - dimen;
 				break;
 
-			case Left:
+			case LEFT:
 				dimen *= trackX;
 				t.x = coords[ curCoord ].x;
 				t.y = coords[ curCoord ].y - curSize.y / 2;
@@ -369,7 +416,7 @@ etc. as required
 				s.y = 0;
 				break;
 
-			case Up:
+			case UP:
 				dimen *= trackY;
 				t.x = coords[ curCoord ].x + curSize.x / 2;
 				t.y = coords[ curCoord ].y;
@@ -391,7 +438,16 @@ etc. as required
         checkPicBounds ( coords + curCoord );
 		break;
 
-    case Comment:
+    case FIGURE:
+		doFigure ( pList );
+		break;
+
+    case DRAW:
+		init = TRUE;
+		doDraw ( comPtr -> name, pList, coords[ curCoord ], curSize, curBoxPos, curPos );
+		break;
+
+    case COMMENT:
 		break;
 
     default:
@@ -399,7 +455,7 @@ etc. as required
         return 0;
     }
     
-    if ( comPtr -> command != Scale ) {
+    if ( comPtr -> command != SCALE ) {
 		curScale.x = curScale.y = 1.;
 	}
 

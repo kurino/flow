@@ -14,10 +14,17 @@
  */
 
 typedef enum {
-	ArrowS,
-	LineS,
-	NoneS
+	ARROW_SYMBOL = 0,
+	LINE_SYMBOL = 1,
+	NONE_SYMBOL = 2
 } TrackSymb;
+
+/*
+ *
+ */
+
+extern	char	*trackSymbToString ( TrackSymb track );
+extern	TrackSymb	stringToTrackSymb ( char *string );
 
 /*
  *

@@ -16,6 +16,9 @@
 #define	TRUE	1
 #define	FALSE	0
 
+#define	bool2str(B)	((B)?"True":"False")
+#define	str2bool(S)	(S[0]=='T')
+
 /*
  *	typedefs
  */

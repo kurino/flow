@@ -118,3 +118,18 @@ Revision history
 		about version ``0.99g+k-0.04 (2012/05/10)''
 	refactaring
 		move Choice drow code docommand.c to drawfigure.c
+
+0.99g+k-0.05 (2012/05/11)
+	README
+		about version ``0.99g+k-0.05 (2012/05/11)''
+	refactaring
+		thecommand.h
+			enum member's name was changed to uppercase
+				direc.h
+				thecommand.h
+				tracksymb.h
+		drawfigure.c
+		move picture commands from drawfigure.c, drawarrow.c to texpicture.c
+	new command
+		Turn [right|left]
+			change direction relative
