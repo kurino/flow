@@ -54,7 +54,7 @@ flow	:	${OBJS}	# drum.pic
 #
 
 clean	:
-	rm flow *.o *.pdf *~
+	rm flow *.o *~ # *.pdf
 
 #
 #

@@ -4,6 +4,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include <ctype.h>
 #include <malloc.h>
 #include <stdlib.h>
 
@@ -73,10 +74,30 @@ char	*readline_infile ( char *line, int size ) {
 		ret = strncpy ( line, ungetline, size );
 		free ( ungetline );
 		ungetline = NULL;
-	} else if ( ( ret = fgets ( line, size, inFile ) ) != NULL ) {
-		l = strlen ( line );
-		if ( l > 0 && line[ l - 1 ] == '\n' ) {
-			line[ l - 1 ] = EOS;
+	} else {
+		while ( ( ret = fgets ( line, size, inFile ) ) != NULL ) {
+			l = strlen ( line );
+
+			if ( l > 0 && line [ l - 1 ] == '\n' ) {
+				line [ --l ] = EOS;			// remove NewLine
+			}
+
+			while ( l > 0 && isspace ( line[ l - 1 ] ) ) {
+				l--;
+			}
+
+			// remove spaces at end of line
+			//	line [ l ] = EOS;	// add then
+
+			if ( l > 0 ) {
+				break;
+			}
+
+			// here, this line is ``space line'', so remove it
+			// But .. ? (2012/05/26 +k-0.06)
+
+			line [ l ] = EOS;		// remove it
+		    inputLine++;
 		}
 	}
 

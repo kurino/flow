@@ -709,76 +709,38 @@ function setOHPHandler() {
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Skip コマンド</td>
-<td><a href="flowdoc_s5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Scale コマンド</td>
+<td><a href="flowdoc_s4_ss2_sss9_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id1242">Skip コマンド</h4>
+<h4 id="doc1_id1251">Scale コマンド</h4>
 
 
 <dl>
 <dt>書き方
-<dd><p></p>
+<dd><pre src="scale.stx">Scale x y
 
-<pre src="skip.stx">Skip x0 y0 x1 x1
 </pre>
-
-<p></p>
 <dt>機能
-<dd><div class="table">
-<table id="doc1_id1268" class="data" rules="groups">
-<colgroup span="2">
-<col>
-<col>
-</colgroup>
-<tbody>
-<tr class="even">
-<td>x0</td>
-<td>横方向のボックス間の空き、初期値は1 <span>\unitlength</span>です。</td>
-</tr>
-<tr class="odd">
-<td>y0</td>
-<td>縦方向のボックス間の空き、初期値は1 <span>\unitlength</span>です。</td>
-</tr>
-<tr class="even">
-<td>x1</td>
-<td><span>Left</span>および<span>Right</span>コマンド用の倍率、初期値は1 <span>\unitlength</span>です。</td>
-</tr>
-<tr class="odd">
-<td>y1</td>
-<td><span>Up</span>および<span>Down</span>コマンド用の倍率、初期値は1 <span>\unitlength</span>です。</td>
-</tr>
-</tbody>
-</table>
-</div>
+<dd>次のアイテムの縦横比を指定値に変更する。
 <dt>入力例
-<dd><a href="sample/skip-ja.flow"> skip-ja.flow </a>
+<dd><a href="sample/scale-ja.flow"> scale-ja.flow </a>
 
-<pre src="sample/skip-ja.flow">Skip 0 0 1 1
-SetTrack none
+<pre src="sample/scale-ja.flow">Right
+Oval
+    普通の
+    オーバル
+Scale 2 1
 Box
-    このボックスの
-    後
-Box
-    間を空けずに
-    別の
-    ボックス
-SetTrack arrow
-Right 5
-Up 1 *
-Left 1 *
-Down 1 *
-Right 1 *
-Skip 0 0 3 3
-Up 1 *
-Left 1 *
-Down 1 *
-Right 1 *
+    STOP用には小さいオーバル
+Scale 0.5 0.5
+Oval
+    STOP
 </pre>
 <dt>出力例
-<dd><img src="figure/skip-ja.jpg" /></dl>
+<dd><img src="figure/scale-ja.jpg" /></dl>
 
 <div class="navigatorbottom">
 <table class="navigator">
@@ -788,8 +750,8 @@ Right 1 *
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Skip コマンド</td>
-<td><a href="flowdoc_s5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Scale コマンド</td>
+<td><a href="flowdoc_s4_ss2_sss9_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>

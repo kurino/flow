@@ -47,25 +47,53 @@ static int gcm ( int a, int b ) {
 	}
 }
 
+
+/*
+ *
+ */
+
+void putInnerCircle ( float cx, float cy, float r ) {
+
+	putCirclePicture ( cx, cy, r * 2.0 );
+}
+
+void putInnerOval ( float cx, float cy, float rx, float ry ) {
+
+	putOvalPicture ( cx, cy, rx * 2.0, ry * 2.0 );
+}
+
+void putInnerBezier ( float p0x, float p0y, float p1x, float p1y, float p2x, float p2y ) {
+
+	putBezierPicture ( p0x, p0y, p1x, p1y, p2x, p2y );
+}
+
 /*
  *
  */
 
 void putInnerLine ( float sx, float sy, float ex, float ey ) {
 
+  //  fprintf ( stderr, "(%f,%f) - (%f,%f)\n", sx, sy, ex, ey );
+
 	if ( sx == ex ) {
 		if ( ey > sy ) {
 			putVerticalLinePicture ( sx, sy, ey - sy );
+		} else {
+			putVerticalLinePicture ( sx, ey, sy - ey );
 		}
 	} else if ( sy == ey ) {
 		if ( ex > sx ) {
 			putHorizontalLinePicture ( sx, sy, ex - sx );
+		} else {
+			putHorizontalLinePicture ( ex, sy, sx - ex );
 		}
 	} else {
+		float px = sx;
+		float py = sy;
+		float l;
 		int	xs = (int)( ex - sx );
 		int	ys = (int)( ey - sy );
 		int g = gcm ( xs, ys );
-		int l;
 
 		if ( g > 1 ) {
 			xs = xs / g;
@@ -81,13 +109,17 @@ void putInnerLine ( float sx, float sy, float ex, float ey ) {
 			ys = TEX_INCLINATION_MAX;
 	    }
 
-		if ( xs > ys ) {
-			l = (int)( ex - sx );
-		} else {
-			l = (int)( ey - sy );
+		l = ex - sx;
+
+		if ( l < 0 ) {
+		  xs = -xs;
+		  ys = -ys;
+		  l = -l;
+		  px = ex;
+		  py = ey;
 		}
 
-		putLinePicture ( sx, sy, xs, ys, l );
+		putLinePicture ( px, py, xs, ys, l );
 	}
 
 }
@@ -131,11 +163,22 @@ void drawInnerLine ( Coord curCoord, Coord curSize, float sx, float sy, float ex
  */
 
 enum {
+  //
+  POS_ER = -1,
+  //
   POS_SX = 0,
   POS_SY = 1,
   POS_EX = 2,
   POS_EY = 3,
-  POS_ER = 4
+  //
+  POS_MX = 4,
+  POS_MY = 5,
+  //
+  POS_HXP = 6,
+  POS_HXN = 7,
+  POS_HYP = 8,
+  POS_HYN = 9
+  //
 };
 
 static float posToLocateOffset ( int pos, Coord curCoord, Coord curSize, float ofs ) {
@@ -145,14 +188,30 @@ static float posToLocateOffset ( int pos, Coord curCoord, Coord curSize, float o
 	case POS_SX:
 		loc = curCoord.x + ofs;
 		break;
-	case POS_SY:
-		loc = curCoord.y - curSize.y + ofs;
+	case POS_EY:
+		loc = curCoord.y - curSize.y - ofs;
 		break;
 	case POS_EX:
 		loc = curCoord.x + curSize.x + ofs;
 		break;
-	case POS_EY:
-		loc = curCoord.y + ofs;
+	case POS_SY:
+		loc = curCoord.y - ofs;
+		break;
+	case POS_MX:
+		loc = curCoord.x + (curSize.x/2) + ofs;
+		break;
+	case POS_MY:
+		loc = curCoord.y - (curSize.y/2) - ofs;
+		break;
+	case POS_HXP:
+	case POS_HYP:
+		loc = ofs;
+		break;
+	case POS_HXN:
+		loc = curSize.x/2 + ofs;
+		break;
+	case POS_HYN:
+		loc = curSize.y/2 + ofs;
 		break;
 	}
 
@@ -168,11 +227,17 @@ static float posToLocate ( int pos, Coord curCoord, Coord curSize ) {
  *
  */
 
-static int tbl[3][4] = {
-  /* 			POS_SX,	POS_SY,	POS_EX,	POS_EY		*/
-  /* '.' */	{	POS_SX,	POS_SY,	POS_EX,	POS_EY	},
-  /* 's' */	{	POS_SX,	POS_SY,	POS_SX,	POS_SY	},
-  /* 'e' */	{	POS_EX,	POS_EY,	POS_EX,	POS_EY	}
+#define	TBL_S	0		/* s */
+#define	TBL_E	1		/* e */
+#define	TBL_M	2		/* m */
+#define	TBL_P	3		/* . */
+
+static int tbl[4][10] = {
+//POS_SX,POS_SY,POS_EX,POS_EY,POS_MX,POS_MY,POS_HXP,POS_HXN,POS_HYP,POS_HYN
+ {POS_SX,POS_SY,POS_SX,POS_SY,POS_MX,POS_MY,POS_HXP,POS_HXP,POS_HYP,POS_HYP},//s
+ {POS_EX,POS_EY,POS_EX,POS_EY,POS_MX,POS_MY,POS_HXN,POS_HXN,POS_HYN,POS_HYN},//e
+ {POS_MX,POS_MY,POS_MX,POS_MY,POS_MX,POS_MY,POS_HXP,POS_HXN,POS_HYP,POS_HYN},//m
+ {POS_SX,POS_SY,POS_EX,POS_EY,POS_MX,POS_MY,POS_HXN,POS_HXN,POS_HYN,POS_HYN} //.
 };
 
 static float getPosition ( char *ptr, int pos, Coord curCoord, Coord curSize ) {
@@ -182,31 +247,50 @@ static float getPosition ( char *ptr, int pos, Coord curCoord, Coord curSize ) {
 
 	switch ( *ptr ) {
 	case '.':
+
 	case 's':
+	case 't':
+	case 'l':
+
+	case 'm':
+	case 'c':
+
 	case 'e':
+	case 'b':
+	case 'r':
 		switch ( *ptr ) {
-		case '.':
-			pos = tbl[0][pos];
-			break;
 		case 's':
-			pos = tbl[1][pos];
+		case 'l':
+		case 't':
+			pos = tbl[TBL_S][pos];
 			break;
 		case 'e':
-			pos = tbl[2][pos];
+		case 'r':
+		case 'b':
+			pos = tbl[TBL_E][pos];
+			break;
+		case 'c':
+		case 'm':
+			pos = tbl[TBL_M][pos];
+			break;
+		case '.':
+		 	pos = tbl[TBL_P][pos];
 			break;
 		}
 		loc = posToLocate ( pos, curCoord, curSize );
 		break;
 	case '-':
-		sign = -1;
-		ptr++;
+	  sign = -1;	// negative
 		// break;
-	default:
+	case '+':
+		ptr++;		// skip sign
+		// break;
+	default:		// maybe number..
 		ofs = atof ( ptr );
-		if ( sign > 0.0 ) {
-			loc = posToLocateOffset ( tbl[1][pos], curCoord, curSize,   ofs );
+		if ( sign > 0 ) {
+			loc = posToLocateOffset ( tbl[TBL_S][pos], curCoord, curSize,   ofs );
 		} else {
-			loc = posToLocateOffset ( tbl[2][pos], curCoord, curSize, - ofs );
+			loc = posToLocateOffset ( tbl[TBL_E][pos], curCoord, curSize, - ofs );
 		}
 		break;
 	}
@@ -229,10 +313,12 @@ static	char	*sArgment ( char *buf, char *src, char *argv[] ) {
 			if ( *src != EOS ) {
 				ch = *src++;
 				if ( isdigit ( ch ) ) {
-					char *q;
-					for ( q = argv[ch-'0'-1]; *q != EOS; ) {
+					char *q = argv[ ch - '0' - 1 ];
+
+					while ( *q != EOS ) {
 						*p++ = *q++;
 					}
+
 				} else {
 					*p++ = ch;
 				}
@@ -247,40 +333,118 @@ static	char	*sArgment ( char *buf, char *src, char *argv[] ) {
 	return buf;
 }
 
+/*
+ *
+ */
+
+static void parseParameter ( float param[], int initial[], int format[], char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	char	token[ TOKEN_SIZE ];
+	int		i;
+
+	for ( i = 0; initial[ i ] != POS_ER; i++ ) {
+		param[ i ] = posToLocate ( initial[ i ], curCoord, curSize );
+	}
+
+	for ( i = 0; format[ i ] != POS_ER; i++ ) {
+	  if ( ( line = getToken ( token, line ) ) != NULL ) {
+		param[ i ] = getPosition ( token, format[ i ], curCoord, curSize );
+	  } else {
+		break;
+	  }
+	}
+
+}
+
+/*
+ *
+ */
+
+static void drawLineBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int f[] = { POS_SX, POS_SY, POS_EX, POS_EY, POS_ER };
+	float p[4];
+
+	parseParameter ( p, f, f, line, argv, curCoord, curSize );
+
+	putInnerLine ( p[0], p[1], p[2], p[3] );
+}
+
+static void drawCircleBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int i[] = { POS_HXN, POS_MX, POS_MY, POS_ER };
+	static int f[] = { POS_HXP, POS_MX, POS_MY, POS_ER };
+	float p[3];
+
+	parseParameter ( p, i, f, line, argv, curCoord, curSize );
+
+	putInnerCircle ( p[1], p[2], p[0] );
+}
+
+static void drawOvalBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int i[] = { POS_HXN, POS_HYN, POS_MX, POS_MY, POS_ER };
+	static int f[] = { POS_HXP, POS_HYP, POS_MX, POS_MY, POS_ER };
+	float p[4];
+
+	parseParameter ( p, i, f, line, argv, curCoord, curSize );
+
+	putInnerOval ( p[2], p[3], p[0], p[1] );
+}
+
+static void drawBezierBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int i[] = {POS_SX, POS_SY, POS_MX, POS_EY, POS_EX, POS_SY, POS_ER};
+	static int f[] = {POS_SX, POS_SY, POS_MX, POS_EY, POS_EX, POS_SY, POS_ER};
+	float p[6];
+
+	parseParameter ( p, i, f, line, argv, curCoord, curSize );
+
+	putInnerBezier ( p[0], p[1], p[2], p[3], p[4], p[5] );
+}
+
+/*
+ *
+ */
+
+typedef	void (*DrawFunc)( char *line, char *argv[], Coord curCoord, Coord curSize );
+
+static struct	{
+  char *name;
+  DrawFunc	drawFunc;
+} figureTable [] = {
+	{	"line",		drawLineBody	},
+	{	"circle",	drawCircleBody	},
+	{	"oval",		drawOvalBody	},
+	{	"bezier",	drawBezierBody	},
+	{	NULL,		NULL			}
+};
+
+static void doDrawBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	char	token[ TOKEN_SIZE ];
+	char	strbuf[ ARG_LINE ];
+	int		i;
+
+	line = sArgment ( strbuf, line, argv );
+
+	if ( ( line = getToken ( token, line ) ) != NULL ) {
+		for ( i = 0; figureTable[i].name != NULL; i++ ) {
+			if ( !strcmp ( figureTable[i].name, token ) ) {
+				figureTable[i].drawFunc ( line, argv, curCoord, curSize );
+				break;
+			}
+		}
+	}
+}
+
+/*
+ * drawBody
+ */
+
 static void drawBody ( Coord curCoord, Coord curSize, StrList *slp, char *argv[] ) {
 	char	*line;
 	VCell	*vcp;
-	char	token[ TOKEN_SIZE ];
-	char	strbuf[ ARG_LINE ];
 
 	if ( slp != NULL ) {
 		for ( vcp = slp -> top; vcp != NULL; vcp = vcp -> next ) {
 			line = (char *)(((VCell *) vcp) -> value);
 			if ( line != NULL ) {
-
-				line = sArgment ( strbuf, line, argv );
-
-				if ( ( line = getToken ( token, line ) ) != NULL ) {
-					if ( !strcmp ( "line", token ) ) {
-						float p[4];
-						int pos;
-
-						for ( pos = POS_SX; pos <= POS_EY; pos++ ) {
-							p[pos] = posToLocate ( pos, curCoord, curSize );
-						}
-
-						for ( pos = POS_SX; pos <= POS_EY; pos++ ) {
-							if ( ( line = getToken ( token, line ) ) != NULL ) {
-								p[pos] = getPosition ( token, pos, curCoord, curSize );
-							} else {
-								break;
-							}
-						}
-
-						putInnerLine ( p[POS_SX], p[POS_SY], p[POS_EX], p[POS_EY] );
-
-					}
-				}
+			  doDrawBody ( line, argv, curCoord, curSize );
 			}
 		}
 	}

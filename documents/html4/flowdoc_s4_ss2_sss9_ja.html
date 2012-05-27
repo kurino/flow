@@ -704,84 +704,92 @@ function setOHPHandler() {
 <div class="navigatortop">
 <table class="navigator">
 <tr>
-<td><a href="flowdoc_s4_ss2_sss1_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_prev_page_"><span class="toggle">&lt;&lt;</span></a></td>
+<td><a href="flowdoc_s4_ss2_sss8_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_prev_page_"><span class="toggle">&lt;&lt;</span></a></td>
 <td><a href="flowdoc_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flow --- 
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Oval, Tilt, Text, Call, Drum コマンド</td>
-<td><a href="flowdoc_s4_ss2_sss3_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Skip コマンド</td>
+<td><a href="flowdoc_s4_ss2_sss10_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id741">Oval, Tilt, Text, Call, Drum コマンド</h4>
+<h4 id="doc1_id1302">Skip コマンド</h4>
 
 
 <dl>
 <dt>書き方
-<dd><pre src="oval-ja.stx">Oval [x y]
-  [indented text]
+<dd><p></p>
 
-Tilt [x y]
-  [indented text]
-
-Call [x y]
-  [indented text]
-
-Drum [x y]
-  [indented text]
-
-Text [x y]
-  [indented text]
+<pre src="skip.stx">Skip x0 y0 x1 x1
 </pre>
-<dt>機能
-<dd><span>Oval</span>、<span>Tilt</span>, <span>Call</span>, <span>Drum</span>および<span>Text</span>は、<span>Box</span>と同じ機能ですが、テキストを囲む枠の形状が異なります。<span>Oval</span>は長円、<span>Tilt</span>は平行四辺形、<span>Call</span>は横枠が二重線、<span>Drum</span>は円筒形<span class="note"><a href="#doc1_id791" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[s.k] CallとDrumは+k-0.01からの拡張です。"><sup>(3)</sup></a></span>、そして<span>Text</span>は枠なしです。
-<dt>入力例
-<dd><a href="sample/oval-ja.flow"> oval-ja.flow </a>
 
-<pre src="sample/oval-ja.flow">Right
-Oval
-    これは
-    オーバル
-Tilt
-    そして
-    これは
-    ティルト
-Call
-    次の
-    これは
-    コール
-Down
-Drum
-    その次の
-    これは
-    ドラム
-Left
-Text
-    そして
-    これは
-    テキスト
+<p></p>
+<dt>機能
+<dd><div class="table">
+<table id="doc1_id1328" class="data" rules="groups">
+<colgroup span="2">
+<col>
+<col>
+</colgroup>
+<tbody>
+<tr class="even">
+<td>x0</td>
+<td>横方向のボックス間の空き、初期値は1 <span>\unitlength</span>です。</td>
+</tr>
+<tr class="odd">
+<td>y0</td>
+<td>縦方向のボックス間の空き、初期値は1 <span>\unitlength</span>です。</td>
+</tr>
+<tr class="even">
+<td>x1</td>
+<td><span>Left</span>および<span>Right</span>コマンド用の倍率、初期値は1 <span>\unitlength</span>です。</td>
+</tr>
+<tr class="odd">
+<td>y1</td>
+<td><span>Up</span>および<span>Down</span>コマンド用の倍率、初期値は1 <span>\unitlength</span>です。</td>
+</tr>
+</tbody>
+</table>
+</div>
+<dt>入力例
+<dd><a href="sample/skip-ja.flow"> skip-ja.flow </a>
+
+<pre src="sample/skip-ja.flow">Skip 0 0 1 1
+SetTrack none
+Box
+    このボックスの
+    後
+Box
+    間を空けずに
+    別の
+    ボックス
+SetTrack arrow
+Right 5
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
+Skip 0 0 3 3
+Up 1 *
+Left 1 *
+Down 1 *
+Right 1 *
 </pre>
 <dt>出力例
-<dd><img src="figure/oval-ja.jpg" /></dl>
-
-
-<div class="footnote">
-<ol>
-<li id="doc1_id791" value="3"> [s.k] <span>Call</span>と<span>Drum</span>は+k-0.01からの拡張です。</ol>
-</div>
+<dd><img src="figure/skip-ja.jpg" /></dl>
 
 <div class="navigatorbottom">
 <table class="navigator">
 <tr>
-<td><a href="flowdoc_s4_ss2_sss1_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&lt;&lt;</span></a></td>
+<td><a href="flowdoc_s4_ss2_sss8_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&lt;&lt;</span></a></td>
 <td><a href="flowdoc_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">Flow --- 
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Oval, Tilt, Text, Call, Drum コマンド</td>
-<td><a href="flowdoc_s4_ss2_sss3_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Skip コマンド</td>
+<td><a href="flowdoc_s4_ss2_sss10_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>

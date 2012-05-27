@@ -709,13 +709,13 @@ function setOHPHandler() {
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id895">SetTrack, TxtPos, SetWidth コマンド</h4>
+<h4 id="doc1_id898">SetTrack, TxtPos, SetWidth コマンド</h4>
 
 
 <dl>
@@ -729,8 +729,8 @@ function setOHPHandler() {
 
 </pre>
 <dt>機能
-<dd><p><span>SetWidth</span> <span class="note"><a href="#doc1_id935" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[sk] SetWidthも+k-0.01から追加。"><sup>(3)</sup></a></span>ボックス間の線を引く場合の線の太さを指定します。初期値は、0.8 emとなっており、thickと指定すると、この標準の0.8 emになります。thinと指定した場合は、0.4 emになり、少し細くなります。直接、数値を指定する事も可能ですが、余りに太いと、矢印に見えなくなってしまうようです。</p>
-<p>thickでもthinでもなく、また数値と解釈できない<span class="note"><a href="#doc1_id938" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="atofの仕様による"><sup>(4)</sup></a></span>か、あるいは0.0以下の太さが指定された場合は、強制的に、標準値( 0.8 em )に戻してしまいます。</p>
+<dd><p><span>SetWidth</span> <span class="note"><a href="#doc1_id938" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[sk] SetWidthも+k-0.01から追加。"><sup>(4)</sup></a></span>ボックス間の線を引く場合の線の太さを指定します。初期値は、0.8 emとなっており、thickと指定すると、この標準の0.8 emになります。thinと指定した場合は、0.4 emになり、少し細くなります。直接、数値を指定する事も可能ですが、余りに太いと、矢印に見えなくなってしまうようです。</p>
+<p>thickでもthinでもなく、また数値と解釈できない<span class="note"><a href="#doc1_id941" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="atofの仕様による"><sup>(5)</sup></a></span>か、あるいは0.0以下の太さが指定された場合は、強制的に、標準値( 0.8 em )に戻してしまいます。</p>
 <dt>書き方
 <dd><pre src="txtpos.stx">TxtPos P1 P2 [B [A]]
 
@@ -748,30 +748,30 @@ function setOHPHandler() {
 SetTrack arrow
 TxtPos [l] [l]
 Box 3.5 2
-    左側に少し
-    スペースが
-    必要
+  左側に少し
+  スペースが
+  必要
 TxtPos [l] [l] ~
 Box
-    少し空けた
-    左揃えの
-    テキスト
+  少し空けた
+  左揃えの
+  テキスト
 SetTrack line
 TxtPos [c] [c]
 Box
-    中央揃えの
-    テキスト
+  中央揃えの
+  テキスト
 SetTrack none
 TxtPos [r] [r] ~ \hspace*{1zh}
 Box
-    右揃えの
-    テキスト
+  右揃えの
+  テキスト
 SetTrack line
 TxtPos [c] [c]
 SetWidth 1.6
 Box
-	最後の線
-	は太い
+  最後の線
+  は太い
 </pre>
 <dt>出力例
 <dd><img src="figure/txtpos-ja.jpg" /></dl>
@@ -779,7 +779,7 @@ Box
 
 <div class="footnote">
 <ol>
-<li id="doc1_id935" value="3"> [sk] SetWidthも+k-0.01から追加。<li id="doc1_id938" value="4"> atofの仕様による</ol>
+<li id="doc1_id938" value="4"> [sk] SetWidthも+k-0.01から追加。<li id="doc1_id941" value="5"> atofの仕様による</ol>
 </div>
 
 <div class="navigatorbottom">
@@ -790,7 +790,7 @@ Box
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/SetTrack, TxtPos, SetWidth コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss5_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>

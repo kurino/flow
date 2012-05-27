@@ -709,38 +709,39 @@ function setOHPHandler() {
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Scale コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Turn コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss8_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)" id="doc_next_page_"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>
 </div>
 
-<h4 id="doc1_id1191">Scale コマンド</h4>
+<h4 id="doc1_id1194">Turn コマンド</h4>
 
 
 <dl>
 <dt>書き方
-<dd><pre src="scale.stx">Scale x y
-
+<dd><pre src="turn.stx">Turn [ (right|left) [d [*]] ]
 </pre>
 <dt>機能
-<dd>次のアイテムの縦横比を指定値に変更する。
+<dd>Turn <span class="note"><a href="#doc1_id1217" onmouseover="hilightSelflink(this)" onmouseout="normal(this)" title="[sk] Turnはk-0.05から利用できます。"><sup>(6)</sup></a></span>はUp, Down, Left, Rightコマンドの相対版であり、Upなどが、現在の向きとは無関係に、次の向きを絶対的に変更するのに対し、Turnは現在の向きに相対的に変更します。
 <dt>入力例
-<dd><a href="sample/scale-ja.flow"> scale-ja.flow </a>
+<dd><a href="sample/k-0.05/turn-ja.flow"> turn-ja.flow </a>
 
-<pre src="sample/scale-ja.flow">Right
-Oval
-    普通の
-    オーバル
-Scale 2 1
-Box
-    STOP用には小さいオーバル
-Scale 0.5 0.5
-Oval
-    STOP
+<pre src="sample/k-0.05/turn-ja.flow">Turn	right	3
+Turn	right	3	*
+Turn	right	2
+Turn	right	2
+Turn	right	1	*
+Turn	right	1
 </pre>
 <dt>出力例
-<dd><img src="figure/scale-ja.jpg" /></dl>
+<dd><img src="figure/turn-ja.jpg" /></dl>
+
+
+<div class="footnote">
+<ol>
+<li id="doc1_id1217" value="6"> [sk] Turnはk-0.05から利用できます。</ol>
+</div>
 
 <div class="navigatorbottom">
 <table class="navigator">
@@ -750,7 +751,7 @@ Oval
 
 <math>L<small>A</small>T<sub>E</sub>X</math>
 
-のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id637" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id671" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Scale コマンド</td>
+のpicture環境でフローチャートを描くプログラム</a>/<a href="flowdoc_s4_ja.html#doc1_id640" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">フローチャート記述言語の文法</a>/<a href="flowdoc_s4_ss2_ja.html#doc1_id674" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)">コマンド</a>/Turn コマンド</td>
 <td><a href="flowdoc_s4_ss2_sss8_ja.html" onmouseover="hilightHyperlink(this)" onmouseout="normal(this)"><span class="toggle">&gt;&gt;</span></a></td>
 </tr>
 </table>

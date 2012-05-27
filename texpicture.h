@@ -39,6 +39,9 @@ extern	void putTextPicture ( double px, double py, char *pos, char *text );
 
 extern	void putBoxTextPicture ( double px, double py, char *box, double sx, double sy, char *boxPos, char *position );
 
+extern	void putCirclePicture ( double cx, double cy, double r );
+extern	void putBezierPicture ( double p0x, double p0y, double p1x, double p1y, double p2x, double p2y );
+
 /*
  *
  */

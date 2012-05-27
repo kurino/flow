@@ -91,17 +91,17 @@ etc. as required
 
     params[ 0 ][ 0 ] = EOS;  /* so Up / Down / Left / Right can find *'s for line drawing */
 
-    if ( comPtr -> hasText ) {
-	if (( comPtr -> command != CHOICE && sscanf(pList,"%f %f",&x,&y) == 2) ||
-	    ( comPtr -> command == CHOICE && sscanf(pList,"%s %s %s %s %f %f",
+    if ( comPtr -> hasText && comPtr -> command != DRAW ) {
+		if (( comPtr -> command != CHOICE && sscanf(pList,"%f %f",&x,&y) == 2) ||
+		    ( comPtr -> command == CHOICE && sscanf(pList,"%s %s %s %s %f %f",
 				       params[0],
 				       params[0],
 				       params[0],
 				       params[0],
 				       &x,&y) == 6)) {
-	    comPtr -> size.x = x;
-	    comPtr -> size.y = y;
-	}
+	    	comPtr -> size.x = x;
+		    comPtr -> size.y = y;
+		}
     }
 
     if ( !init && curSize.x == 0. && curSize.y == 0. ) {

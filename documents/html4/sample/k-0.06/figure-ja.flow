@@ -1,0 +1,65 @@
+Figure  myBox  6  3  True  1
+  line  s  s  s  e
+  line  s  s  e  s
+  line  s   %1  e   %1
+  line  s  e  e  e
+  line  e  s  e  e
+  line  s  -%1  e  -%1
+Figure  myBox2  6  2  True  1
+  line  s  s  s  e
+  line   %1  s   %1  e
+  line  s  s  e  s
+  line  s  e  e  e
+  line  e  s  e  e
+  line  -%1  s  -%1  e
+Figure  myChoice  4  4  True
+  line  m  t  r  m
+  line  r  m  m  b
+  line  m  b  l  c
+  line  l  c  m  t
+Figure  myCircle  1  1  True
+  circle
+  circle -0.2 -0.2 +0.0
+  circle -0.2 +0.0 -0.2
+  circle +0.1 -0.5 +0.0
+  circle 2
+Figure  myOval  4  2  True
+  oval
+  oval 1.5
+  oval . 0.5
+Figure  myBezier  4  2  True
+  bezier
+Scale 0.5 0.5
+Oval
+  開始
+Down
+Draw myBox 0.1
+  Draw 命令による
+  myBox 0.1
+myBox  0.1
+  Draw を省略した場合の
+  myBox 0.1
+Right
+myBox  0.2
+  引数の値を変更
+  myBox 0.2
+Right
+myBox2  0.1
+  別のボックス
+  myBox2 0.1
+Down
+myChoice
+  菱形
+Left
+myCircle
+  丸
+Left
+myOval
+  楕円形
+Left
+myBezier
+  ベジエ曲線
+Down
+Scale 0.5 0.5
+Oval
+  終了

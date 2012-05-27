@@ -133,3 +133,56 @@ Revision history
 	new command
 		Turn [right|left]
 			change direction relative
+
+0.99g+k-0.06 (2012/05/28)
+	README
+		about version ``0.99g+k-0.06 (2012/05/28)''
+	Documents ( sorry, only japanese version )
+		- add new feature
+			Turn, Figure, Draw
+	new command
+		Figure name [ xSize ySize [ hasText [ numberOfArgs ] ] ]
+			make new figure
+				argument
+					name ( String ) : Name of new figure
+					xSize, ySize ( Integer ) : Size of Figure
+					hasText ( Boolean ) : if True then has Text
+					numberOfArgs ( Integer ) : Number of Parameters
+						there are accessed by %1, %2, ..
+				body : drwing commands
+			drawing command rules
+				coordinates
+					origin is up left
+					edge is down right
+						s,t,l is start ( same as origin )
+						e,b,r is end ( save as edge )
+						c,m is middle
+						[# or +#] means [orign + #]
+						[-#] means [edge - #]
+
+				 Origin		m,c
+					+---------------+		-
+			  s,t,l	|  #		 -#	| e,b,r
+					|				|
+					|				|
+					|				|
+					|				|
+					+---------------+		+
+								   Edge
+
+					-				+
+
+				draw commands
+					line SX SY EX EY
+						draw line (SX,SY) - (EX,EY)
+					circle R CX CY
+						draw circle center (CX,CY) and R
+						origin center of x
+							CX, CY : # means CX + #
+							R : # => R=#, -# => R=XH-# ( XH = xSize/2 )
+					oval RX RY CX CY
+						simuler circle
+					bezier X0 Y0 X1 Y1 X2 Y2
+		Draw
+			draw new figure
+

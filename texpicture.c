@@ -111,3 +111,26 @@ void putBoxTextPicture ( double px, double py, char *box, double sx, double sy, 
 /*
  *
  */
+
+void putCirclePicture ( double cx, double cy, double r ) {
+
+	tprintf ( "\\put(%3.4f,%3.4f){\\circle{%3.4f}}\n",
+			  cx, cy, r );
+
+}
+
+/*
+ *
+ */
+
+void putBezierPicture ( double p0x, double p0y, double p1x, double p1y, double p2x, double p2y ) {
+
+	tprintf ( "\\qbezier(%3.4f,%3.4f)(%3.4f,%3.4f)(%3.4f,%3.4f)\n",
+			  p0x, p0y, p1x, p1y, p2x, p2y );
+
+}
+
+/*
+ *
+ */
+
