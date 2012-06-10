@@ -1,0 +1,19 @@
+#ifndef _JIS_HAND_INPUT_
+#define _JIS_HAND_INPUT_
+%
+%	jis-hand-input.grp
+%
+%		JIS Hand Input
+%
+%		jisHandInput
+%
+Figure jisHandInputBody 4 2 True 0
+	line s ++%1 e +-%1
+	line s    e e    e
+	line s ++%1 s    e
+	line e +-%1 e    e
+%
+Figure jisHandInput 4 2 True 0
+	jisHandInputBody 0.5
+%
+#endif

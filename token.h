@@ -26,6 +26,7 @@
 extern	char	*skipSpace ( char *ptr );
 extern	char	*getToken ( char *word, char *line );
 extern	char	*skipToken ( char *ptr );
+extern	char	*getLastText ( char *word, char *line );
 
 /*
  *

@@ -1,0 +1,21 @@
+#ifndef _JIS_CARD_
+#define _JIS_CARD_
+%
+%	jis-card.grp
+%
+%		JIS Card
+%
+%		jisCard
+%
+Figure jisCardBody 4 2 True 2
+	line ++%1 s e s
+	line s e e e
+	line ++%1 s s ++%2
+	line s ++%2 s e
+	line e s e e
+%
+%
+Figure jisCard 4 2 True 0
+	jisCardBody 1.0 0.5
+%
+#endif

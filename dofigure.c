@@ -87,10 +87,6 @@ void	dumpFigure( void ) {
  *
  */
 
-/*
- *
- */
-
 Figure	*findFigure ( char *name ) {
 	Figure	*find = NULL;
 

@@ -96,7 +96,7 @@ char	*readline_infile ( char *line, int size ) {
 			// here, this line is ``space line'', so remove it
 			// But .. ? (2012/05/26 +k-0.06)
 
-			line [ l ] = EOS;		// remove it
+			//			line [ l ] = EOS;		// remove it
 		    inputLine++;
 		}
 	}
@@ -114,12 +114,12 @@ char	*readline_infile ( char *line, int size ) {
 
 void close_infile ( void ) {
 
-  if ( inFile != NULL ) {
-	if ( inFile != stdin ) {
-	  fclose ( inFile );
+	if ( inFile != NULL ) {
+		if ( inFile != stdin ) {
+			fclose ( inFile );
+		}
+		inFile = NULL;
 	}
-	inFile = NULL;
-  }
 }
 
 /*
@@ -128,7 +128,7 @@ void close_infile ( void ) {
 
 int	eof_infile ( void ) {
 
-  return ( ungetline == NULL ) && feof ( inFile );
+	return ( ungetline == NULL ) && feof ( inFile );
 }
 
 /*

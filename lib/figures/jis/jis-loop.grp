@@ -1,0 +1,49 @@
+#ifndef _JIS_LOOP_
+#define _JIS_LOOP_
+%
+%	jis-loop.grp
+%
+%		JIS Input/Output
+%
+%		jisLoopStart
+%		jisLoopEnd
+%
+Figure jisLoopBody 4 2 True 5
+	line ++%1 %3    -+%1 %3
+	line s    %4    e    %4
+	line ++%1 %3    s    %5+%2
+	line s    %5+%2 s    %4
+	line -+%1 %3    e    %5+%2
+	line e    %5+%2 e    %4
+%
+Figure jisLoopStartBody2 4 2 True 4
+	jisLoopBody %1 %2 s e +
+Figure jisLoopEndBody2 4 2 True 4
+	jisLoopBody %1 %2 e s -
+%
+Figure jisLoopStartBody 4 2 True 2
+	line ++%1 s -+%1 s
+	line s e e e
+	line ++%1 s s ++%2
+	line s ++%2 s e
+	line -+%1 s e ++%2
+	line e ++%2 e e
+%
+Figure jisLoopEndBody 4 2 True 2
+	line ++%1 e -+%1 e
+	line s s e s
+	line ++%1 e s -+%2
+	line s -+%2 s s
+	line -+%1 e e -+%2
+	line e -+%2 e s
+%
+Figure jisLoopStart 4 2 True 0
+	jisLoopStartBody2 1.0 0.5
+%	jisLoopStartBody 1.0 0.5
+%
+Figure jisLoopEnd 4 2 True 0
+	jisLoopEndBody2 1.0 0.5
+%	jisLoopEndBody 1.0 0.5
+%
+#endif
+

@@ -49,7 +49,7 @@ static ErrorInformation	errTab[] = {
   /* error */
 
 	{	E_INTERPRET_LINE,
-		"can't interpret line %d\n",
+		"can't interpret line %d : %s\n",
 		FLOW_ERROR, FALSE	},
 
 	{	E_TAG_STACK_EMPTY,
@@ -62,6 +62,14 @@ static ErrorInformation	errTab[] = {
 
 	{	E_UNKNOWN_COMMAND,
 		"unknown command %4d\n",
+		FLOW_ERROR, FALSE	},
+
+	{	E_UNDEFINED_FIGURE,
+		"undefined figure %s\n",
+		FLOW_ERROR, FALSE	},
+
+	{	E_RECURSIVE_FIGURE,
+		"recursive figure %s call\n",
 		FLOW_ERROR, FALSE	},
 
 	/* error exit */

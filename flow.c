@@ -54,6 +54,12 @@ int main ( int argc, char *argv[] ) {
     FlowCom	*comPtr = NULL;
 	char	line [ LINE_LEN ];
 
+	if ( argc > 1 && !strcmp( argv[1], "-D" ) ) {
+		argv++;
+		argc--;
+		setDebugFlag();
+	}
+
 	open_tempfile();
 	open_infile ( ( argc > 1 ) ? argv[ 1 ] : NULL );
 

@@ -74,4 +74,31 @@ char *skipToken ( char *ptr ) {
  *
  */
 
+char	*getLastText ( char *word, char *line ) {
+	char *q = NULL;
+	char *p = word;
+	int	ch;
+
+	line = skipSpace ( line );
+
+	while ( ( ch = (*p++ = *line++) ) != EOS ) {
+		if ( isspace ( ch ) ) {
+			if ( q == NULL ) {
+				q = p;
+			}
+		} else {
+			q = NULL;
+		}
+	}
+
+	if ( q != NULL ) {
+		*q = EOS;	/* remove tail space */
+	}
+
+	return word;
+}
+
+/*
+ *
+ */
 

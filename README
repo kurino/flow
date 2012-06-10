@@ -186,3 +186,34 @@ Revision history
 		Draw
 			draw new figure
 
+0.99g+k-0.07 (2012/06/10)
+	README
+		about version ``0.99g+k-0.07 (2012/06/10)''
+	command changes
+		Drum command with title
+			Drum [X Y [titles ..]]
+				we can put title to Drum
+	Bug Fix
+		Figure : bezier
+			Default value of X1 (m) is wrong. change it (s).
+			# enbuged in k-0.06
+		Figure : line
+			illiegal convert from float to int
+	draw commands (alpha-release)
+		box X0 Y0 X1 Y0
+		text X Y string
+		can use other predefine Figure
+			check recursive using ( It is illiegal in this version. )
+	refactaring
+		Makefile => genrule.mf / depends.mf
+			use CPP for include
+		draw command
+			line => preserve start-end direction
+		drawChoice
+			use 
+	add figure library
+		lib/figures
+	new option
+		-D : debug print
+	change dump code
+		Now don't print comment line

@@ -29,6 +29,9 @@ extern	void remove_tempfile ( void );
 extern	void apply_tempfile ( BoundingBox pic, char *outName );
 
 extern	void tprintf ( char *fmt, ... );
+extern	void tdprintf ( char *fmt, ... );
+
+extern	void setDebugFlag(void);
 
 /*
  *

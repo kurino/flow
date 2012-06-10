@@ -20,6 +20,7 @@
 #include "token.h"
 #include "drawfigure.h"
 #include "figure.h"
+#include "tempfile.h"
 #include "dofigure.h"
 #include "dodraw.h"
 
@@ -29,6 +30,21 @@
 
 #define	ARGS		10
 #define	ARG_LINE	1024
+
+/*
+ *
+ */
+
+static int toInt ( float x ) {
+	 int sign = 1;
+
+	 if ( x < 0 ) {
+	   x = -x;
+	   sign = -1;
+	 }
+
+	 return sign * (((int)((x)*1000)+5)/10);
+}
 
 /*
  *
@@ -47,7 +63,6 @@ static int gcm ( int a, int b ) {
 	}
 }
 
-
 /*
  *
  */
@@ -64,36 +79,39 @@ void putInnerOval ( float cx, float cy, float rx, float ry ) {
 
 void putInnerBezier ( float p0x, float p0y, float p1x, float p1y, float p2x, float p2y ) {
 
+//  fprintf ( stderr, "(%f,%f) - (%f,%f) - (%f,%f)\n", p0x, p0y, p1x, p1y, p2x, p2y );
+
 	putBezierPicture ( p0x, p0y, p1x, p1y, p2x, p2y );
 }
 
+void putInnerText ( float px, float py, char *text ) {
+
+//  fprintf ( stderr, "(%f,%f) [%f,%f] %s\n", px, py, sx, sy, text );
+
+	putBoxTitlePicture( px, py, 0, 0, text );
+}
+
 /*
- *
+ * @@@ How to get m/n ( which is nearest x/y and m,n in 0-15 ) from x/y ?
  */
 
 void putInnerLine ( float sx, float sy, float ex, float ey ) {
+	int	xs = toInt(ex) - toInt(sx);
+	int	ys = toInt(ey) - toInt(sy);
 
-  //  fprintf ( stderr, "(%f,%f) - (%f,%f)\n", sx, sy, ex, ey );
+//  fprintf ( stderr, "(%f,%f) - (%f,%f)\n", sx, sy, ex, ey );
+	tdprintf ( "line (%f,%f) - (%f,%f)\n", sx, sy, ex, ey );
 
-	if ( sx == ex ) {
-		if ( ey > sy ) {
-			putVerticalLinePicture ( sx, sy, ey - sy );
-		} else {
-			putVerticalLinePicture ( sx, ey, sy - ey );
-		}
-	} else if ( sy == ey ) {
-		if ( ex > sx ) {
-			putHorizontalLinePicture ( sx, sy, ex - sx );
-		} else {
-			putHorizontalLinePicture ( ex, sy, sx - ex );
-		}
+	if ( xs == 0 ) {
+		putVerticalLinePicture ( sx, sy, ey - sy );
+	} else if ( ys == 0 ) {
+		putHorizontalLinePicture ( sx, sy, ex - sx );
 	} else {
-		float px = sx;
-		float py = sy;
-		float l;
-		int	xs = (int)( ex - sx );
-		int	ys = (int)( ey - sy );
 		int g = gcm ( xs, ys );
+
+		//		fprintf ( stderr, "sx = %f, ex = %f, xs = %d\n", sx, ex, xs );
+		//		fprintf ( stderr, "sy = %f, ey = %f, ys = %d\n", sy, ey, ys );
+		//		fprintf ( stderr, "g = %d\n", g );
 
 		if ( g > 1 ) {
 			xs = xs / g;
@@ -101,25 +119,28 @@ void putInnerLine ( float sx, float sy, float ex, float ey ) {
 		}
 
 		if ( xs > TEX_INCLINATION_MAX )	{
+			tdprintf ( "xs=%d\n", xs );
 			errout ( W_ASPECT );
 			xs = TEX_INCLINATION_MAX;
-	    }
-    	if ( ys > TEX_INCLINATION_MAX ) {
+	    } else if ( - xs > TEX_INCLINATION_MAX )	{
+			tdprintf ( "xs=%d\n", xs );
 			errout ( W_ASPECT );
-			ys = TEX_INCLINATION_MAX;
-	    }
-
-		l = ex - sx;
-
-		if ( l < 0 ) {
-		  xs = -xs;
-		  ys = -ys;
-		  l = -l;
-		  px = ex;
-		  py = ey;
+			xs = - TEX_INCLINATION_MAX;
 		}
 
-		putLinePicture ( px, py, xs, ys, l );
+    	if ( ys > TEX_INCLINATION_MAX ) {
+			tdprintf ( "ys=%d\n", ys );
+			errout ( W_ASPECT );
+			ys = TEX_INCLINATION_MAX;
+	    } else if ( - ys > TEX_INCLINATION_MAX ) {
+			tdprintf ( "ys=%d\n", ys );
+			errout ( W_ASPECT );
+			ys = - TEX_INCLINATION_MAX;
+		}
+
+		tdprintf ( "[Innerline] (%f,%f)[%d,%d]{%lf}\n", sx, sy, xs, ys, ex - sx );
+
+		putLinePicture ( sx, sy, xs, ys, ex - sx );
 	}
 
 }
@@ -156,6 +177,20 @@ void drawInnerLine ( Coord curCoord, Coord curSize, float sx, float sy, float ex
 
 	putInnerLine ( sx, sy, ex, ey );
 
+}
+
+/*
+ *
+ */
+
+void putInnerBox ( float sx, float sy, float ex, float ey )	{
+  //  fprintf ( stderr, "(%f,%f)-(%f,%f)\n", sx, sy, ex, ey );
+
+	putInnerLine ( sx, sy, sx, ey );
+	putInnerLine ( ex, sy, ex, ey );
+
+	putInnerLine ( sx, sy, ex, sy );
+	putInnerLine ( sx, ey, ex, ey );
 }
 
 /*
@@ -280,8 +315,14 @@ static float getPosition ( char *ptr, int pos, Coord curCoord, Coord curSize ) {
 		loc = posToLocate ( pos, curCoord, curSize );
 		break;
 	case '-':
-	  sign = -1;	// negative
+	case 'B':
+	case 'R':
+	case 'E':
+		sign = -1;	// negative
 		// break;
+	case 'S':
+	case 'T':
+	case 'L':
 	case '+':
 		ptr++;		// skip sign
 		// break;
@@ -337,7 +378,7 @@ static	char	*sArgment ( char *buf, char *src, char *argv[] ) {
  *
  */
 
-static void parseParameter ( float param[], int initial[], int format[], char *line, char *argv[], Coord curCoord, Coord curSize ) {
+static char *parseParameter ( float param[], int initial[], int format[], char *line, char *argv[], Coord curCoord, Coord curSize ) {
 	char	token[ TOKEN_SIZE ];
 	int		i;
 
@@ -353,6 +394,7 @@ static void parseParameter ( float param[], int initial[], int format[], char *l
 	  }
 	}
 
+	return line;
 }
 
 /*
@@ -389,65 +431,39 @@ static void drawOvalBody ( char *line, char *argv[], Coord curCoord, Coord curSi
 }
 
 static void drawBezierBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
-	static int i[] = {POS_SX, POS_SY, POS_MX, POS_EY, POS_EX, POS_SY, POS_ER};
-	static int f[] = {POS_SX, POS_SY, POS_MX, POS_EY, POS_EX, POS_SY, POS_ER};
+	static int i[] = {POS_SX, POS_SY, POS_SX, POS_EY, POS_EX, POS_SY, POS_ER};
+	static int f[] = {POS_SX, POS_SY, POS_SX, POS_EY, POS_EX, POS_SY, POS_ER};
 	float p[6];
+
+	tdprintf ( "bezier %s\n", line );
 
 	parseParameter ( p, i, f, line, argv, curCoord, curSize );
 
 	putInnerBezier ( p[0], p[1], p[2], p[3], p[4], p[5] );
 }
 
-/*
- *
- */
+static void drawTextBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int i[] = {POS_SX, POS_SY, POS_ER};
+	static int f[] = {POS_SX, POS_SY, POS_ER};
+	float p[2];
 
-typedef	void (*DrawFunc)( char *line, char *argv[], Coord curCoord, Coord curSize );
+	tdprintf ( "text %s\n", line );
 
-static struct	{
-  char *name;
-  DrawFunc	drawFunc;
-} figureTable [] = {
-	{	"line",		drawLineBody	},
-	{	"circle",	drawCircleBody	},
-	{	"oval",		drawOvalBody	},
-	{	"bezier",	drawBezierBody	},
-	{	NULL,		NULL			}
-};
+	line = parseParameter ( p, i, f, line, argv, curCoord, curSize );
 
-static void doDrawBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
-	char	token[ TOKEN_SIZE ];
-	char	strbuf[ ARG_LINE ];
-	int		i;
-
-	line = sArgment ( strbuf, line, argv );
-
-	if ( ( line = getToken ( token, line ) ) != NULL ) {
-		for ( i = 0; figureTable[i].name != NULL; i++ ) {
-			if ( !strcmp ( figureTable[i].name, token ) ) {
-				figureTable[i].drawFunc ( line, argv, curCoord, curSize );
-				break;
-			}
-		}
-	}
+	putInnerText ( p[0], p[1], line );
 }
 
-/*
- * drawBody
- */
+static void drawBoxBody ( char *line, char *argv[], Coord curCoord, Coord curSize ) {
+	static int i[] = {POS_SX, POS_SY, POS_EX, POS_EY, POS_ER};
+	static int f[] = {POS_SX, POS_SY, POS_EX, POS_EY, POS_ER};
+	float p[2];
 
-static void drawBody ( Coord curCoord, Coord curSize, StrList *slp, char *argv[] ) {
-	char	*line;
-	VCell	*vcp;
+	tdprintf ( "box %s\n", line );
 
-	if ( slp != NULL ) {
-		for ( vcp = slp -> top; vcp != NULL; vcp = vcp -> next ) {
-			line = (char *)(((VCell *) vcp) -> value);
-			if ( line != NULL ) {
-			  doDrawBody ( line, argv, curCoord, curSize );
-			}
-		}
-	}
+	parseParameter ( p, i, f, line, argv, curCoord, curSize );
+
+	putInnerBox ( p[0], p[1], p[2], p[3] );
 }
 
 /*
@@ -478,23 +494,108 @@ static	char	**sepArgs ( char *args[ARGS+1], char *argv, char *params ) {
  *
  */
 
-void	doDraw ( char *name, char *pList, Coord curCoord, Coord curSize, char *curBoxPos, char *curPos ) {
-	Figure	*find = findFigure ( name );
+static void drawBody ( Coord curCoord, Coord curSize, StrList *slp, char *argv[], StrList *rec );
+
+static	void doDrawFigure ( Figure *find, char *pList, Coord curCoord, Coord curSize, StrList *rec ) {
 	char	*argv[ARGS+1];
 	char	args[ARG_LINE];
 
 	sepArgs ( argv, args, pList );
+
+	drawBody ( curCoord, curSize, find -> body, argv, rec );
+}
+/*
+ *
+ */
+
+typedef	void (*DrawFunc)( char *line, char *argv[], Coord curCoord, Coord curSize );
+
+static struct	{
+  char *name;
+  DrawFunc	drawFunc;
+} figureTable [] = {
+	{	"line",		drawLineBody	},
+	{	"circle",	drawCircleBody	},
+	{	"oval",		drawOvalBody	},
+	{	"bezier",	drawBezierBody	},
+	{	"text",		drawTextBody	},
+	{	"box",		drawBoxBody		},
+	{	NULL,		NULL			}
+};
+
+static void doDrawBody ( char *line, char *argv[], Coord curCoord, Coord curSize, StrList *rec ) {
+	char	token[ TOKEN_SIZE ];
+	char	strbuf[ ARG_LINE ];
+
+	line = sArgment ( strbuf, line, argv );
+
+	if ( ( line = getToken ( token, line ) ) != NULL ) {
+		Figure	*find;
+		int		i;
+
+		for ( i = 0; figureTable[i].name != NULL; i++ ) {
+			if ( !strcmp ( figureTable[i].name, token ) ) {
+				figureTable[i].drawFunc ( line, argv, curCoord, curSize );
+				return;
+			}
+		}
+
+		if ( ( find = findFigure ( token ) ) != NULL ) {
+			if ( findStrList ( rec, token ) == NULL ) {
+				insertStrList ( rec, token );
+				tdprintf ( "FIGURE %s\n", token );
+				doDrawFigure ( find, line, curCoord, curSize, rec );
+				removeTopStrList ( rec );
+			} else {
+				errout ( E_RECURSIVE_FIGURE, token );
+			}
+		} else {
+			errout ( E_UNDEFINED_FIGURE, token );
+		}
+	}
+}
+
+/*
+ * drawBody
+ */
+
+static void drawBody ( Coord curCoord, Coord curSize, StrList *slp, char *argv[], StrList *rec ) {
+	char	*line;
+	VCell	*vcp;
+
+	if ( slp != NULL ) {
+		for ( vcp = slp -> top; vcp != NULL; vcp = vcp -> next ) {
+			line = (char *)(((VCell *) vcp) -> value);
+			if ( line != NULL ) {
+				doDrawBody ( line, argv, curCoord, curSize, rec );
+			}
+		}
+	}
+}
+
+/*
+ *
+ */
+
+void	doDraw ( char *name, char *pList, Coord curCoord, Coord curSize, char *curBoxPos, char *curPos ) {
+	Figure	*find = findFigure ( name );
+	StrList	*rec = allocStrList();
 
 	if ( find != NULL ) {
 		if ( find -> command -> hasText ) {
 			drawMakePut ( curCoord, curSize, curBoxPos, curPos );
 		}
 
-		drawBody ( curCoord, curSize, find -> body, argv );
+		insertStrList ( rec, name );
+		tdprintf ( "FIGURE %s\n", name );
+		doDrawFigure ( find, pList, curCoord, curSize, rec );
+		removeTopStrList ( rec );
 
 		checkTextPicBoundsRng ( curCoord, curSize );
 
 	}
+
+	freeStrList ( rec );
 
 }
 

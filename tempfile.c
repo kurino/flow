@@ -115,6 +115,34 @@ void tprintf ( char *fmt, ... ) {
 
 }
 
+/*
+ *
+ */
+
+static int debugFlag = 0;
+
+void setDebugFlag(void) {
+
+	debugFlag = 1;
+}
+
+/*
+ *
+ */
+
+void tdprintf ( char *fmt, ... ) {
+	va_list ap;
+
+	if ( outFile == NULL ) {
+		errout ( E_TEMPFILE_NOT_OPENED );
+	} else if ( debugFlag == 1 ) {
+		fprintf ( outFile, "%%DEBUG: " );
+		va_start ( ap, fmt );
+		vfprintf ( outFile, fmt, ap );
+		va_end( ap );
+	} 
+
+}
 
 /*
  *

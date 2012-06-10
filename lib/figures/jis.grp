@@ -1,0 +1,16 @@
+#ifndef _JIS_GRP_
+#define _JIS_GRP_ 1
+%
+% JIS Symbol Library
+%	see : http://www9.plala.or.jp/sgwr-t/c_sub/jis_fl.html
+%
+#include "jis/jis-card.grp"
+#include "jis/jis-display.grp"
+#include "jis/jis-document.grp"
+#include "jis/jis-hand-input.grp"
+#include "jis/jis-hand-work.grp"
+#include "jis/jis-io.grp"
+#include "jis/jis-loop.grp"
+#include "jis/jis-preparation.grp"
+%
+#endif

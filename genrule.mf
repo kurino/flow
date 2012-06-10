@@ -1,0 +1,50 @@
+#
+#
+#
+
+FLOW_HOME=/home/kurino/bin/lib/flow
+
+#
+#
+#
+
+FLOW_LIB=${FLOW_HOME}/lib/figures
+
+#
+#
+#
+
+FLOW=${FLOW_HOME}/flow -D
+CPP=cpp -I${FLOW_LIB} -traditional-cpp
+
+#NKF_EUC=cat
+NKF_EUC=nkf -e
+
+#
+#
+#
+
+.SUFFIXES: .mdoc .sdoc .flow .tex .dvi .pdf .eps .jpg .pic .orig .diff
+
+#
+#
+#
+
+%.dvi	:	%.tex %.pic
+	platex $*.tex
+	platex $*.tex
+
+%.pdf	:	%.dvi
+	dvipdfmx $*.dvi
+  
+#
+#
+#
+
+%.pic	:	%.flow
+	${CPP} $^ | grep -v "^#" | ${NKF_EUC} | ${FLOW} | grep -v "^%.*flow 0.99g" | grep -v "^%DEBUG:" > $*.pic
+
+#
+#
+#
+

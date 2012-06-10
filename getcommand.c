@@ -97,7 +97,7 @@ tries to interpret the next line of inFile as a command, returns NULL if it can'
     }
 
 	if ( !eof_infile() && line[0] != EOS ) {
-		errout ( E_INTERPRET_LINE, get_input_line() );
+		errout ( E_INTERPRET_LINE, get_input_line(), line );
 	}
 
 	return NULL;

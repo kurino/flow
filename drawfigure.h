@@ -34,6 +34,7 @@ extern	void drawCall ( Coord curCoord, Coord curSize );
 extern	void drawOval ( Coord curCoord, Coord curSize );
 extern	void drawChoice ( Coord curCoord, Coord curSize );
 
+extern	void drawTitleText ( Coord curCoord, Coord curSize, char *title );
 
 /*
  *

@@ -37,6 +37,13 @@ void	printStrList ( StrList *lp, char *sep );
  *
  */
 
+extern	void	*popStrList ( StrList *lp );
+extern	void	removeTopStrList ( StrList *lp );
+
+/*
+ *
+ */
+
 #endif
 
 /*

@@ -9,6 +9,8 @@
  *	includes
  */
 
+#include "tracksymb.h"
+
 /*
  *	constants
  */
@@ -23,13 +25,11 @@
  *	externs
  */
 
-extern	void putSegmentPicture ( char *segment, double px, double py, int dx, int dy, double len );
-extern	void putLinePicture ( double px, double py, int dx, int dy, double len );
+void putSegmentPicture ( char *segment, double px, double py, int dx, int dy, double len );
 
-extern	void putHorizontalLinePicture ( double px, double py, double len );
-extern	void putVerticalLinePicture ( double px, double py, double len );
-
-extern	void putVectorPicture ( double px, double py, int dx, int dy, double len );
+/*
+ *
+ */
 
 extern	void putOvalPartsPicture ( double cx, double cy, double rx, double ry, char *position );
 
@@ -41,6 +41,19 @@ extern	void putBoxTextPicture ( double px, double py, char *box, double sx, doub
 
 extern	void putCirclePicture ( double cx, double cy, double r );
 extern	void putBezierPicture ( double p0x, double p0y, double p1x, double p1y, double p2x, double p2y );
+
+/*
+ *
+ */
+
+extern	void putBoxTitlePicture ( double px, double py, double sx, double sy, char *title );
+
+
+extern	void putLinePicture ( double px, double py, int dx, int dy, double len );
+extern	void putVectorPicture ( double px, double py, int dx, int dy, double len );
+
+extern	void putHorizontalLinePicture ( double px, double py, double len );
+extern	void putVerticalLinePicture ( double px, double py, double len );
 
 /*
  *

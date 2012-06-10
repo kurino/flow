@@ -1,0 +1,19 @@
+#ifndef _JIS_HAND_WORK_
+#define _JIS_HAND_WORK_
+%
+%	jis-hand-work.grp
+%
+%		JIS Hand Work
+%
+%		jisHandWork
+%
+Figure jisHandWorkBody 4 3 True 0
+	line ++%1 s -+%1 s
+	line +-%1 e --%1 e
+	line ++%1 s +-%1 e
+	line -+%1 s --%1 e
+%
+Figure jisHandWork 4 3 True 0
+	jisHandWorkBody 0.3
+%
+#endif

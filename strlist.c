@@ -91,3 +91,24 @@ void	printStrList ( StrList *lp, char *sep ) {
 /*
  *
  */
+
+void	*popStrList ( StrList *lp ) {
+
+	return (char *) popVList ( (VList *)lp );
+}
+
+/*
+ *
+ */
+
+void	removeTopStrList ( StrList *lp ) {
+	char *str = popStrList ( lp );	
+
+	if ( str != NULL ) {
+		free ( str );
+	}
+}
+
+/*
+ *
+ */

@@ -47,6 +47,26 @@ void	freeVList ( VList *lp, void (*freeFunc)( void * ) ) {
 
 }
 
+/*
+ *
+ */
+
+void	*popVList ( VList *lp ) {
+	VCell	*cp;
+	void	*value = NULL;
+
+	if ( lp != NULL ) {
+		if ( ( cp = lp -> top ) != NULL ) {
+			value = cp -> value;
+			if ( ( lp -> top = cp -> next ) == NULL ) {
+				lp -> tail = NULL;
+			}
+			xfree ( cp );
+		}
+	}
+
+	return value;
+}
 
 /*
  *

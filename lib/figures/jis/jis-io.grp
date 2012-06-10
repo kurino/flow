@@ -1,0 +1,19 @@
+#ifndef _JIS_IO_
+#define _JIS_IO_
+%
+%	jis_io.grp
+%
+%		JIS Input/Output
+%
+%		jisIO
+%
+Figure jisIOBody 4 3 True 0
+	line ++%1 s --%1 s
+	line +-%1 e -+%1 e
+	line ++%1 s +-%1 e
+	line --%1 s -+%1 e
+%
+Figure jisIO 4 3 True 0
+	jisIOBody 0.3
+%
+#endif

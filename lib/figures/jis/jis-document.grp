@@ -1,0 +1,21 @@
+#ifndef _JIS_DOCUMENT_
+#define _JIS_DOCUMENT_
+%
+%	jis-document.grp
+%
+%		JIS Document
+%
+%		jisDocument
+%
+Figure jisDocumentBody 4 2 True 1
+	line s s e s
+	line s s s e
+	line e s e e
+	bezier s e ++%1 --%2 m e
+	bezier m e -+%1 -+%2 e e
+%
+%
+Figure jisDocument 4 2 True 0
+	jisDocumentBody 1.0 0.5
+%
+#endif

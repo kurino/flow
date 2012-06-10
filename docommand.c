@@ -87,26 +87,62 @@ etc. as required
 	TheCommands	curCommand;
 	char *pList = comArg;
 
+	int nParam = 0;
+	int dFlag = 0;
+
     dimen = 0.;
 
     params[ 0 ][ 0 ] = EOS;  /* so Up / Down / Left / Right can find *'s for line drawing */
 
-    if ( comPtr -> hasText && comPtr -> command != DRAW ) {
-		if (( comPtr -> command != CHOICE && sscanf(pList,"%f %f",&x,&y) == 2) ||
-		    ( comPtr -> command == CHOICE && sscanf(pList,"%s %s %s %s %f %f",
-				       params[0],
-				       params[0],
-				       params[0],
-				       params[0],
-				       &x,&y) == 6)) {
-	    	comPtr -> size.x = x;
-		    comPtr -> size.y = y;
+	switch ( comPtr -> command ) {
+	case CHOICE:
+		if ( sscanf(pList,"%s %s %s %s %f %f",
+				params[0],
+			    params[0],
+			    params[0],
+			    params[0],
+				&x,&y) == 6 ) {
+			comPtr -> size.x = x;
+			comPtr -> size.y = y;
 		}
-    }
+		nParam = 2;
+		dFlag = 1;
+		break;
+	case FIGURE:
+	  /*
+		if ( sscanf(pList,"%s %f %f",
+	   				params[0],
+ 				&x,&y) == 3 ) {
+			comPtr -> size.x = x;
+			comPtr -> size.y = y;
+			nParam = 2;
+		}
+		//		fprintf ( stderr, "%s, %f, %f\n", params[0], x, y );
+		*/
+		nParam = 2;
+		dFlag = 1;
+		break;
+    case COMMENT:
+		break;
+	case DRAW:
+		dFlag = 1;
+		nParam = 2;
+		break;
+	default:
+		if ( comPtr -> hasText ) {
+			if ( sscanf(pList,"%f %f",&x,&y) == 2 ) {
+				comPtr -> size.x = x;
+				comPtr -> size.y = y;
+			}
+		}
+		nParam = 2;
+		dFlag = 1;
+		break;
+	}
 
     if ( !init && curSize.x == 0. && curSize.y == 0. ) {
-	    curSize.x = comPtr -> size.x * curScale.x;
-	    curSize.y = comPtr -> size.y * curScale.y;
+		curSize.x = comPtr -> size.x * curScale.x;
+		curSize.y = comPtr -> size.y * curScale.y;
     }
 
     if ( init && ( comPtr -> size.x != 0 || comPtr -> size.y != 0 ) ) {
@@ -123,7 +159,7 @@ etc. as required
 				t.y = coords[ curCoord ].y - curSize.y / 2;
 				s.x = horzGap;
 				s.y = comPtr -> size.y * curScale.y / 2;
-			break;
+				break;
 
 			case DOWN_DIR:
 				dimen = vertGap;
@@ -175,10 +211,15 @@ etc. as required
 
 	/* dump command */
 
-	tprintf ( "%%%s %f,%f\n",
-		comPtr -> name,
-		comPtr -> size.x,
-		comPtr -> size.y );
+	if ( dFlag == 1 ) {
+		tprintf ( "%%%s", comPtr -> name );
+		if ( nParam == 2 ) {
+			tprintf ( " %f,%f",
+				comPtr -> size.x,
+				comPtr -> size.y );
+		}
+		tprintf ( "\n" );
+	}
 
 	/* do command */
 
@@ -220,6 +261,15 @@ etc. as required
 
 		drawMakePut ( coords[curCoord], curSize, curBoxPos, curPos );
 		drawDrum ( coords[curCoord], curSize );
+
+		if ( *pList != EOS ) {
+			char *p = skipToken ( skipToken ( pList ) );	/* skip 2 params */
+
+			if ( *p != EOS ) {
+				getLastText ( params[0], p );
+				drawTitleText ( coords[curCoord], curSize, params[0] );
+			}
+		}
 
 		break;
 

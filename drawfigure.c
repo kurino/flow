@@ -13,6 +13,7 @@
 #include "pic.h"
 #include "errout.h"
 #include "texpicture.h"
+#include "dodraw.h"
 #include "drawfigure.h"
 
 /*
@@ -281,14 +282,15 @@ void drawChoice ( Coord curCoord, Coord curSize ) {
 	 *
 	 */
 
+  /*
 	int	i;
 	int	xs = (int)curSize.x;
 	int	ys = (int)curSize.y;
-
+  */
 	/*
 	 *
 	 */
-
+  /*
 	for ( i = (xs > ys) ? xs : ys; i > 1; i-- ) {
 		if ( (xs % i) == 0 && (ys % i) == 0 ) {
 			xs /= i;
@@ -328,6 +330,39 @@ void drawChoice ( Coord curCoord, Coord curSize ) {
 		      curCoord.x + curSize.x,
 		      curCoord.y - curSize.y/2,
 		      -xs, ys, curSize.x / 2
+		      );
+  */
+
+  putInnerLine (
+		      curCoord.x,
+		      curCoord.y - curSize.y / 2,
+
+			  curCoord.x + curSize.x / 2,
+		      curCoord.y
+				);
+
+  putInnerLine (
+		      curCoord.x,
+		      curCoord.y - curSize.y / 2,
+
+			  curCoord.x + curSize.x / 2,
+		      curCoord.y - curSize.y
+		      );
+
+  putInnerLine (
+		      curCoord.x + curSize.x,
+		      curCoord.y - curSize.y / 2,
+
+		      curCoord.x + curSize.x / 2,
+		      curCoord.y - curSize.y
+		      );
+
+  putInnerLine (
+		      curCoord.x + curSize.x,
+		      curCoord.y - curSize.y / 2,
+
+		      curCoord.x + curSize.x / 2,
+		      curCoord.y
 		      );
 
 	/*
@@ -406,6 +441,16 @@ void drawSelect ( Coord curCoord, Coord curSize,
 	/*
 	 *
 	 */
+
+}
+
+/*
+ *
+ */
+
+void drawTitleText ( Coord curCoord, Coord curSize, char *title ) {
+
+	putBoxTitlePicture ( curCoord.x, curCoord.y - 1.0, curSize.x, 1.0, title );
 
 }
 

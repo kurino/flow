@@ -39,6 +39,12 @@ extern	void	printVList ( VList *lp, void (*printFunc)(void *), char *sep );
  *
  */
 
+extern	void	*popVList ( VList *lp );	/* remove top value */
+
+/*
+ *
+ */
+
 #endif
 
 /*
