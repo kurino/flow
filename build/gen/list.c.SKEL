@@ -1,0 +1,87 @@
+/*
+ *	%NAME%list.c
+ */
+
+#include <string.h>
+
+/*
+ *
+ */
+
+#include "vfunc.h"
+#include "vlist.h"
+#include "%NAME%.h"
+#include "%NAME%list.h"
+
+/*
+ *
+ */
+
+%CAPITAL%List	*insert%CAPITAL%List ( %CAPITAL%List *lp, %CAPITAL% *value ) {
+
+	if ( value != NULL ) {
+		return (%CAPITAL%List *) insertVList ( (VList *)lp, (void *)value );
+	}
+
+	return NULL;
+}
+
+/*
+ *
+ */
+
+%CAPITAL%List	*append%CAPITAL%List ( %CAPITAL%List *lp, %CAPITAL% *value ) {
+
+	if ( value != NULL ) {
+		return (%CAPITAL%List *) appendVList ( (VList *)lp, (void *)value );
+	}
+
+	return NULL;
+}
+
+/*
+ *
+ */
+
+static	void	free%CAPITAL%Func ( void *p ) {
+
+	free%CAPITAL% ( (%CAPITAL% *)p );
+}
+
+static	void	print%CAPITAL%Func ( void *p ) {
+
+	print%CAPITAL%( (%CAPITAL% *)p );
+}
+
+static	int	compare%CAPITAL%Func ( void *p, void *q ) {
+
+	return strcmp ( (char *)p, ((%CAPITAL% *)q) -> name );
+}
+
+/*
+ *
+ */
+
+static	VFunc	*table = NULL;
+
+/*
+ *
+ */
+
+%CAPITAL%List	*alloc%CAPITAL%List ( void ) {
+
+	if ( table == NULL ) {
+		table = allocVFunc ( free%CAPITAL%Func, print%CAPITAL%Func, compare%CAPITAL%Func );
+	}
+
+	if ( table != NULL ) {
+		return (%CAPITAL%List *) allocVList ( table );
+	}
+
+	return NULL;
+
+}
+
+/*
+ *
+ */

@@ -9,12 +9,13 @@ FLOW_HOME=/home/kurino/bin/lib/flow
 #
 
 FLOW_LIB=${FLOW_HOME}/lib/figures
-
+BLD_DIR=${FLOW_HOME}/build
+  
 #
 #
 #
 
-FLOW=${FLOW_HOME}/flow -D
+FLOW=${BLD_DIR}/flow -D
 CPP=cpp -I${FLOW_LIB} -traditional-cpp
 
 #NKF_EUC=cat

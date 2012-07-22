@@ -16,7 +16,7 @@ FLOW_LIB=${FLOW_HOME}/lib/figures
 #
 #
 
-FLOW=${FLOW_HOME}/flow
+FLOW=${FLOW_HOME}/build/flow
 CPP="cpp -I${FLOW_LIB} -traditional-cpp"
 NKF_EUC="nkf -e"
 

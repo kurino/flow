@@ -1,0 +1,47 @@
+/*
+ * %NAME%list.h
+ */
+
+#ifndef	_%UPPER%LIST_H_
+#define	_%UPPER%LIST_H_	1
+
+/*
+ *	includes
+ */
+
+#include	"vlist.h"
+#include	"%NAME%.h"
+
+/*
+ *	constants
+ */
+
+#define	%CAPITAL%List	VList
+
+#define	free%CAPITAL%List(LP)			freeVList((VList *)(LP))
+#define	find%CAPITAL%List(LP,TARGET)	((%CAPITAL% *)findVList((VList *)(LP),(void *)(TARGET)))
+#define	print%CAPITAL%List(LP,SEP)		printVList((VList *)(LP),SEP)
+#define	pop%CAPITAL%List(LP)			((%CAPITAL% *)popVList((VList *)(LP)))
+
+/*
+ *	typedefs
+ */
+
+/*
+ *	externs
+ */
+
+extern	%CAPITAL%List	*alloc%CAPITAL%List ( void );
+extern	%CAPITAL%List	*insert%CAPITAL%List ( %CAPITAL%List *lp, %CAPITAL% *value );
+extern	%CAPITAL%List	*append%CAPITAL%List ( %CAPITAL%List *lp, %CAPITAL% *value );
+
+/*
+ *
+ */
+
+#endif
+
+/*
+ *
+ */
+

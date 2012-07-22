@@ -1,0 +1,78 @@
+#
+#	Makefile
+#
+
+#BASE=$(notdir ${PWD})
+BASE=flow
+
+#
+#
+#
+
+SRC_DIR=../src
+INC_DIR=../include
+GEN_DIR=gen
+
+#
+#
+#
+
+vpath	%.c	${SRC_DIR} ${GEN_DIR}
+vpath	%.h	${INC_DIR} ${GEN_DIR}
+
+#
+#
+#
+
+CFLAGS=-DKURINO -I${INC_DIR} -I${GEN_DIR}	# -DDEBUG_PRINT
+BINDIR=~/bin
+
+#
+#
+#
+
+include ../genrule.mf
+
+#
+#
+#
+
+all:	dogen ${BASE}#	flowdoc.pdf
+
+#
+#
+#
+
+dogen	:
+	( cd ${GEN_DIR} ; make )
+
+#
+#
+#
+
+include depends.mf
+
+#
+#
+#
+
+${BASE}	:	${OBJS}	# drum.pic
+	${CC} -o $@ ${OBJS}
+
+#
+#
+#
+
+clean	:
+	rm ${BASE} *.o # *.pdf
+
+#
+#
+#
+
+install	:	${BASE}
+	cp ${BASE} ${BINDIR}
+
+#
+#
+#

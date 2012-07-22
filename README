@@ -217,3 +217,31 @@ Revision history
 		-D : debug print
 	change dump code
 		Now don't print comment line
+
+0.99g+k-0.08 (2012/06/10)
+	README
+		about version ``0.99g+k-0.08 (2012/06/10)''
+	refactaring
+		made atag.c from docommand.c
+		mkdir src (for *.c), include(for *.h), build(for *.o), flowdoc(for *.pdf)
+		modify vlist.c for vmap.c
+		change "float" to "double"
+	new option
+		-V : print version and exit
+	bugfix
+		dodraw - local array size is too small
+	new command (exterminal)
+		Mark name
+			mark postion ( this postion is named )
+		Go name
+			drow arrow to named postion
+		Known Bug
+			1. need ``Down #'' command before Mark/Go command for postion fix
+ 			2. can't forwarding reference to name
+			3. it only work on up to down or down to up
+		Macro name -- EndMacro
+			define new macro
+		Expand name
+			expand macro
+		Known Bug
+			if recursive defined then it make infty loop
